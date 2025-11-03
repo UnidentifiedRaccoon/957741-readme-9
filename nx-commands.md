@@ -25,9 +25,9 @@ npx nx g @nx/nest:app apps/api-gateway
 Создает NestJS приложение api-gateway
 
 ```bash
-npx nx g @nx/nest:app apps/user-service
+npx nx g @nx/nest:app apps/account-service
 ```
-Создает NestJS приложение user-service
+Создает NestJS приложение account-service
 
 ```bash
 npx nx g @nx/nest:app apps/content-service
@@ -62,9 +62,9 @@ npx nx g @nx/workspace:remove api-gateway-e2e
 Удаляет e2e тесты для api-gateway
 
 ```bash
-npx nx g @nx/workspace:remove user-service-e2e
+npx nx g @nx/workspace:remove account-service-e2e
 ```
-Удаляет e2e тесты для user-service
+Удаляет e2e тесты для account-service
 
 ```bash
 npx nx g @nx/workspace:remove content-service-e2e
