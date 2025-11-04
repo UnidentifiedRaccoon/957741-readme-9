@@ -11,7 +11,7 @@ export class AuthenticationService {
     private readonly blogUserRepository: BlogUserRepository
   ) {}
 
-  public async register(dto: CreateUserDto) {
+  public async register(dto: CreateUserDto): Promise<BlogUserEntity> {
     const {email, firstname, lastname, password, dateBirth} = dto;
 
     const blogUser = {
@@ -26,10 +26,12 @@ export class AuthenticationService {
     }
 
     const userEntity = await new BlogUserEntity(blogUser).setPassword(password);
-    return this.blogUserRepository.save(userEntity);
+    this.blogUserRepository.save(userEntity);
+
+    return userEntity
   }
 
-  public async login(dto: LoginUserDto) {
+  public async login(dto: LoginUserDto): Promise<BlogUserEntity> {
     const {email, password} = dto;
 
     const user = await this.blogUserRepository.findByEmail(email);
@@ -44,7 +46,7 @@ export class AuthenticationService {
     return user;
   }
 
-  public async getUser(id: string) {
+  public async getUser(id: string): Promise<BlogUserEntity> {
     const user = await this.blogUserRepository.findById(id);
     if (!user) {
       throw new NotFoundException(AUTH_USER_NOT_FOUND);
