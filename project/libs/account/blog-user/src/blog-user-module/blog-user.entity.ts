@@ -5,11 +5,11 @@ import { SALT_ROUNDS } from './blog-user.constant';
 
 
 export class BlogUserEntity extends Entity implements StorableEntity<AuthUser> {
-  public email!: string;
-  public firstname!: string;
-  public lastname!: string;
-  public dateOfBirth!: Date;
-  public passwordHash!: string;
+  public email: string;
+  public firstname: string;
+  public lastname: string;
+  public dateOfBirth: Date;
+  public passwordHash: string;
 
   constructor(user?: AuthUser) {
     super();
