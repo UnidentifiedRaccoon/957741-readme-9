@@ -169,3 +169,10 @@ npx nx g @nx/nest:resource apps/content-service/src/app/foo
 npx nx g @nx/nest:service apps/content-service/src/app/foo
 ```
 Генерирует сервис NestJS
+
+## Генераторы node компонентов
+
+Генерация библиотеки
+```bash
+npx nx generate @nx/node:library libs/shared/core 
+```
