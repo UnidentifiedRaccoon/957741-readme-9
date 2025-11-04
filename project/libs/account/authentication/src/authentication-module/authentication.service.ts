@@ -21,12 +21,12 @@ export class AuthenticationService {
     };
 
     const existUser = await this.blogUserRepository.findByEmail(email);
-    if (!existUser) {
+    if (existUser) {
       throw new ConflictException(AUTH_USER_EXISTS);
     }
 
     const userEntity = await new BlogUserEntity(blogUser).setPassword(password);
-    this.blogUserRepository.save(userEntity);
+    await this.blogUserRepository.save(userEntity);
 
     return userEntity
   }
