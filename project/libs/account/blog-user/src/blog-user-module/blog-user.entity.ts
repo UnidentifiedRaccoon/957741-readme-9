@@ -1,12 +1,12 @@
-import { Entity } from '@project/shared/core';
-import { StorableEntity, AuthUser } from '@project/shared/core';
+import { Entity } from '@project/core';
+import { StorableEntity, AuthUser } from '@project/core';
 
 export class BlogUserEntity extends Entity implements StorableEntity<AuthUser> {
-  public email: string;
-  public firstname: string;
-  public lastname: string;
-  public dateOfBirth: Date;
-  public passwordHash: string;
+  public email!: string;
+  public firstname!: string;
+  public lastname!: string;
+  public dateOfBirth!: Date;
+  public passwordHash!: string;
 
   constructor(user?: AuthUser) {
     super();
@@ -33,7 +33,6 @@ export class BlogUserEntity extends Entity implements StorableEntity<AuthUser> {
       firstname: this.firstname,
       lastname: this.lastname,
       dateOfBirth: this.dateOfBirth,
-      role: 'user' as any, // временно, так как AuthUser требует role
       passwordHash: this.passwordHash,
     };
   }
