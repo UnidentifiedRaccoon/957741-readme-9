@@ -1,1 +1,1 @@
-export { BlogUserModule } from './lib/blog-user.module';
+export { BlogUserModule } from './blog-user-module/blog-user.module';
