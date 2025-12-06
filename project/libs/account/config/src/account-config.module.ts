@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 import applicationConfig from './configurations/app.config';
-import mongoConfig from './configurations/mongo.config';
+import mongoConfig from './configurations/mongodb/mongo.config';
 
 const ENV_USERS_FILE_PATH = 'apps/account-service/account.env';
 
