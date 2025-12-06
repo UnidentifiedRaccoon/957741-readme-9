@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-const ENV_USERS_FILE_PATH = 'apps/account/account.env';
+const ENV_USERS_FILE_PATH = 'apps/account-service/account.env';
 
 @Module({
     imports: [
