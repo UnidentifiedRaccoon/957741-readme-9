@@ -10,7 +10,7 @@ export function getMongooseOptions(): MongooseModuleAsyncOptions {
           username: config.get<string>('db.user'),
           password: config.get<string>('db.password'),
           host: config.get<string>('db.host'),
-          port: config.get<string>('db.port'),
+          port: config.get<number>('db.port'),
           authDatabase: config.get<string>('db.authBase'),
           databaseName: config.get<string>('db.name'),
         })

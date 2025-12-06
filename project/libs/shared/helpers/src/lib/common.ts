@@ -25,6 +25,15 @@ export function fillDto<T, V extends PlainObject>(
   });
 }
 
-export function getMongoConnectionString({username, password, host, port, databaseName, authDatabase}): string {
+export interface GetMongoConnectionStringParams {
+  username: string;
+  password: string;
+  host: string;
+  port: number;
+  databaseName: string;
+  authDatabase: string;
+}
+
+export function getMongoConnectionString({username, password, host, port, databaseName, authDatabase}: GetMongoConnectionStringParams): string {
   return `mongodb://${username}:${password}@${host}:${port}/${databaseName}?authSource=${authDatabase}`;
 }

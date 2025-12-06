@@ -5,14 +5,13 @@ import { BlogUserFactory } from './blog-user.factory';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { BlogUserModel } from './blog-user.model';
+import { BlogUserDocument, BlogUserModel } from './blog-user.model';
 
 @Injectable()
-export class BlogUserRepository extends BaseMongoRepository<BlogUserEntity, BlogUserModel> {
+export class BlogUserRepository extends BaseMongoRepository<BlogUserEntity, BlogUserDocument> {
   constructor(
     entityFactory: BlogUserFactory,
-    @InjectModel(BlogUserModel.name) blogUserModel: Model<BlogUserModel>,
-  
+    @InjectModel(BlogUserModel.name) blogUserModel: Model<BlogUserDocument>,
   ) {
     super(entityFactory, blogUserModel);
   }

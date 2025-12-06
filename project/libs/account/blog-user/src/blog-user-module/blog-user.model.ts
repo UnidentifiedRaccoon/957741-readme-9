@@ -1,4 +1,4 @@
-import { Document } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { AuthUser } from '@project/core';
 
@@ -6,7 +6,7 @@ import { AuthUser } from '@project/core';
   collection: 'accounts',
   timestamps: true,
 })
-export class BlogUserModel extends Document implements AuthUser {
+export class BlogUserModel implements AuthUser {
   @Prop()
   public avatar: string;
 
@@ -28,3 +28,5 @@ export class BlogUserModel extends Document implements AuthUser {
 }
 
 export const BlogUserSchema = SchemaFactory.createForClass(BlogUserModel);
+
+export type BlogUserDocument = HydratedDocument<BlogUserModel>;

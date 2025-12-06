@@ -1,4 +1,4 @@
-import { Document, Model, UpdateQuery } from 'mongoose';
+import { HydratedDocument, Model, UpdateQuery } from 'mongoose';
 import { NotFoundException } from '@nestjs/common';
 
 import { Entity, StorableEntity, EntityFactory } from '@project/core';
@@ -6,7 +6,7 @@ import { Repository } from './repository.interface';
 
 export abstract class BaseMongoRepository<
   T extends Entity & StorableEntity<ReturnType<T['toPOJO']>>,
-  DocumentType extends Document
+  DocumentType extends HydratedDocument<unknown>
 > implements Repository<T> {
 
   constructor(
@@ -16,7 +16,7 @@ export abstract class BaseMongoRepository<
 
 
   protected createEntityFromDocument(document: DocumentType | null): T | null {
-    if (! document) {
+    if (!document) {
       return null;
     }
 
@@ -44,14 +44,14 @@ export abstract class BaseMongoRepository<
     )
       .exec();
 
-    if (! updatedDocument) {
+    if (!updatedDocument) {
       throw new NotFoundException(`Entity with id ${entity.id} not found`);
     }
   }
 
   public async deleteById(id: T['id']): Promise<void> {
     const deletedDocument = await this.model.findByIdAndDelete(id).exec();
-    if (! deletedDocument) {
+    if (!deletedDocument) {
       throw new NotFoundException(`Entity with id ${id} not found.`);
     }
   }
