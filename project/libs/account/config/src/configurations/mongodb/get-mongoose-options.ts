@@ -1,4 +1,4 @@
-import { getMongoConnectionString } from '@project/shared/helpers';
+import { getMongoConnectionString } from '@project/helpers';
 import { MongooseModuleAsyncOptions } from '@nestjs/mongoose';
 import { ConfigService } from '@nestjs/config';
 
