@@ -176,3 +176,15 @@ npx nx g @nx/nest:service apps/content-service/src/app/foo
 ```bash
 npx nx generate @nx/node:library libs/shared/core 
 ```
+
+## Запуск docker-compose
+
+```bash
+docker compose --file ./apps/account-service/docker-compose.dev.yml --project-name "typoteka-account" --env-file ./apps/account-service/account.env up -d
+```
+
+## Запуск проекта
+
+```bash
+npx nx serve <project-name>
+```
