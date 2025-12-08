@@ -1,0 +1,20 @@
+{
+  "name": "engage-models",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/engage/models/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/engage/models",
+        "tsConfig": "libs/engage/models/tsconfig.lib.json",
+        "packageJson": "libs/engage/models/package.json",
+        "main": "libs/engage/models/src/index.ts",
+        "assets": ["libs/engage/models/*.md"]
+      }
+    }
+  }
+}

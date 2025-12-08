@@ -1,5 +1,5 @@
 {
-  "name": "models",
+  "name": "content-models",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/content/models/src",
   "projectType": "library",
