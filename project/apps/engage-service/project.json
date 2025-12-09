@@ -62,6 +62,13 @@
         "command": "npx prisma generate --schema ./schema.prisma",
         "cwd": "libs/engage/models/prisma"
       }
+    },
+    "db:seed": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx ts-node seed.ts",
+        "cwd": "libs/engage/models/prisma"
+      }
     }
   }
 }
