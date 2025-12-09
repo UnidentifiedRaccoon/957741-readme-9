@@ -1,0 +1,20 @@
+# Toggle like on a post
+POST http://localhost:3002/api/likes/post-uuid-here?userId=user-uuid-here HTTP/1.1
+
+###
+
+# Get likes count for a post
+GET http://localhost:3002/api/likes/post-uuid-here/count HTTP/1.1
+
+###
+
+# Check if user liked a post
+GET http://localhost:3002/api/likes/post-uuid-here/check?userId=user-uuid-here HTTP/1.1
+
+###
+
+# Delete all likes for a post (internal use)
+DELETE http://localhost:3002/api/likes/post-uuid-here HTTP/1.1
+
+###
+
