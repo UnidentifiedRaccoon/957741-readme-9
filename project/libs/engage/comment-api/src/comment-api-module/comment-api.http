@@ -1,0 +1,35 @@
+# Create a comment
+POST http://localhost:3002/api/comments/post-uuid-here?userId=user-uuid-here HTTP/1.1
+Content-Type: application/json
+
+{
+  "text": "This is a great post! Thank you for sharing this content."
+}
+
+###
+
+# Get comments for a post
+GET http://localhost:3002/api/comments/post-uuid-here HTTP/1.1
+
+###
+
+# Get comments with pagination
+GET http://localhost:3002/api/comments/post-uuid-here?limit=10&page=1 HTTP/1.1
+
+###
+
+# Get comments count for a post
+GET http://localhost:3002/api/comments/post-uuid-here/count HTTP/1.1
+
+###
+
+# Delete a comment
+DELETE http://localhost:3002/api/comments/comment-uuid-here?userId=user-uuid-here HTTP/1.1
+
+###
+
+# Delete all comments for a post (internal use)
+DELETE http://localhost:3002/api/comments/post/post-uuid-here HTTP/1.1
+
+###
+

@@ -1,0 +1,9 @@
+{
+  "name": "content-tag",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/content/tag/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {}
+}
+

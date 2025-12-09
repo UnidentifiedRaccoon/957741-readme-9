@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PostType {
+  VIDEO
+  TEXT
+  QUOTE
+  PHOTO
+  LINK
+}
+
+enum PostStatus {
+  PUBLISHED
+  DRAFT
+}
+
+model Post {
+  id              String     @id @default(uuid())
+  type            PostType
+  status          PostStatus @default(PUBLISHED)
+  userId          String     @map("user_id")
+
+  title           String?
+
+  extraFields     Json?      @map("extra_fields")
+
+  isRepost        Boolean    @default(false) @map("is_repost")
+  originalPostId  String?    @map("original_post_id")
+  originalUserId  String?    @map("original_user_id")
+
+  createdAt       DateTime   @default(now()) @map("created_at")
+  publishedAt     DateTime   @default(now()) @map("published_at")
+
+  tags            Tag[]
+
+  @@index([title])
+  @@index([userId])
+  @@index([type])
+  @@index([status])
+  @@map("posts")
+}
+
+model Tag {
+  id    String @id @default(uuid())
+  name  String @unique
+  posts Post[]
+
+  @@map("tags")
+}

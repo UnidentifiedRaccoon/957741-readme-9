@@ -180,7 +180,11 @@ npx nx generate @nx/node:library libs/shared/core
 ## Запуск docker-compose
 
 ```bash
-docker compose --file ./apps/account-service/docker-compose.dev.yml --project-name "typoteka-account" --env-file ./apps/account-service/account.env up -d
+docker compose --file ./apps/account-service/docker-compose.dev.yml --project-name "readme-account" --env-file ./apps/account-service/account-service.env up -d
+```
+
+```bash
+docker compose --file ./apps/content-service/docker-compose.dev.yml --project-name "readme-content" --env-file ./apps/content-service/content-service.env up -d
 ```
 
 ## Запуск проекта

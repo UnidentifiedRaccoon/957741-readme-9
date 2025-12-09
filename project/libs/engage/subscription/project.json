@@ -1,0 +1,9 @@
+{
+  "name": "engage-subscription",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/engage/subscription/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {}
+}
+

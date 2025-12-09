@@ -1,0 +1,9 @@
+{
+  "name": "content-post",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/content/post/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {}
+}
+

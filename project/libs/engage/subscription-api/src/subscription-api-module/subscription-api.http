@@ -1,0 +1,35 @@
+# Subscribe to a user
+POST http://localhost:3002/api/subscriptions/following-user-uuid?followerId=follower-user-uuid HTTP/1.1
+
+###
+
+# Unsubscribe from a user
+DELETE http://localhost:3002/api/subscriptions/following-user-uuid?followerId=follower-user-uuid HTTP/1.1
+
+###
+
+# Get list of users that current user follows
+GET http://localhost:3002/api/subscriptions/user-uuid-here/following HTTP/1.1
+
+###
+
+# Get list of followers
+GET http://localhost:3002/api/subscriptions/user-uuid-here/followers HTTP/1.1
+
+###
+
+# Get followers count
+GET http://localhost:3002/api/subscriptions/user-uuid-here/followers/count HTTP/1.1
+
+###
+
+# Get following count
+GET http://localhost:3002/api/subscriptions/user-uuid-here/following/count HTTP/1.1
+
+###
+
+# Check if subscribed
+GET http://localhost:3002/api/subscriptions/check?followerId=follower-uuid&followingId=following-uuid HTTP/1.1
+
+###
+

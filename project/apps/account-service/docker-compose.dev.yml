@@ -1,9 +1,9 @@
 version: '3.9'
 services:
-  typoteka.account.mongo:
+  readme.account.mongo:
     image: mongo:4.4
     restart: always
-    container_name: typoteka.account.mongo
+    container_name: readme.account.mongo
 
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
@@ -14,12 +14,12 @@ services:
       - ${MONGO_PORT}:${MONGO_PORT}
 
     volumes:
-      - typoteka.mongo.account:/data/db
+      - readme.mongo.account:/data/db
 
-  typoteka.account.mongo.ui:
+  readme.account.mongo.ui:
     image: mongo-express:1.0.2-20
     restart: always
-    container_name: typoteka.account.mongo.ui
+    container_name: readme.account.mongo.ui
     ports:
       - ${MONGO_UI_PORT}:8081
     environment:
@@ -27,7 +27,7 @@ services:
       ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_PASSWORD}
       ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_USER}
       ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_PASSWORD}
-      ME_CONFIG_MONGODB_URL: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@typoteka.account.mongo:${MONGO_PORT}/
+      ME_CONFIG_MONGODB_URL: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@readme.account.mongo:${MONGO_PORT}/
 
 volumes:
-  typoteka.mongo.account:
+  readme.mongo.account:

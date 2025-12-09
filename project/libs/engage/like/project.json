@@ -1,0 +1,9 @@
+{
+  "name": "engage-like",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/engage/like/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {}
+}
+
