@@ -14,7 +14,7 @@ import { CommentApiService } from './comment-api.service';
 import { CreateCommentDto } from '../dto/create-comment.dto';
 import { CommentQueryDto } from '../dto/comment-query.dto';
 import { CommentRdo } from '../rdo/comment.rdo';
-import { fillDto } from '@project/helpers';
+import { fillDto, UserIdQueryDto } from '@project/helpers';
 
 @ApiTags('comments')
 @Controller('comments')
@@ -32,7 +32,7 @@ export class CommentApiController {
   public async create(
     @Param('postId') postId: string,
     @Body() dto: CreateCommentDto,
-    @Query('userId') userId: string, // TODO: Get from JWT token
+    @Query() { userId }: UserIdQueryDto, // TODO: Get from JWT token
   ): Promise<CommentRdo> {
     const comment = await this.commentApiService.createComment(postId, dto, userId);
     return fillDto(CommentRdo, comment.toPOJO());
@@ -84,7 +84,7 @@ export class CommentApiController {
   @HttpCode(HttpStatus.NO_CONTENT)
   public async delete(
     @Param('commentId') commentId: string,
-    @Query('userId') userId: string, // TODO: Get from JWT token
+    @Query() { userId }: UserIdQueryDto, // TODO: Get from JWT token
   ): Promise<void> {
     await this.commentApiService.deleteComment(commentId, userId);
   }

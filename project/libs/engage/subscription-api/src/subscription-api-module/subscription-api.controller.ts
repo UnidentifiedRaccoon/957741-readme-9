@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { SubscriptionApiService } from './subscription-api.service';
+import { CheckSubscriptionQueryDto, FollowerIdQueryDto } from '@project/helpers';
 
 @ApiTags('subscriptions')
 @Controller('subscriptions')
@@ -22,8 +23,7 @@ export class SubscriptionApiController {
   })
   @Get('check')
   public async checkSubscription(
-    @Query('followerId') followerId: string,
-    @Query('followingId') followingId: string,
+    @Query() { followerId, followingId }: CheckSubscriptionQueryDto,
   ): Promise<{ subscribed: boolean }> {
     const subscribed = await this.subscriptionApiService.isSubscribed(followerId, followingId);
     return { subscribed };
@@ -38,7 +38,7 @@ export class SubscriptionApiController {
   @Post(':userId')
   public async subscribe(
     @Param('userId') followingId: string,
-    @Query('followerId') followerId: string, // TODO: Get from JWT token
+    @Query() { followerId }: FollowerIdQueryDto, // TODO: Get from JWT token
   ): Promise<{ subscribed: boolean }> {
     return this.subscriptionApiService.subscribe(followerId, followingId);
   }
@@ -52,7 +52,7 @@ export class SubscriptionApiController {
   @Delete(':userId')
   public async unsubscribe(
     @Param('userId') followingId: string,
-    @Query('followerId') followerId: string, // TODO: Get from JWT token
+    @Query() { followerId }: FollowerIdQueryDto, // TODO: Get from JWT token
   ): Promise<{ subscribed: boolean }> {
     return this.subscriptionApiService.unsubscribe(followerId, followingId);
   }

@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LikeApiService } from './like-api.service';
+import { UserIdQueryDto } from '@project/helpers';
 
 @ApiTags('likes')
 @Controller('likes')
@@ -24,7 +25,7 @@ export class LikeApiController {
   @Post(':postId')
   public async toggleLike(
     @Param('postId') postId: string,
-    @Query('userId') userId: string, // TODO: Get from JWT token
+    @Query() { userId }: UserIdQueryDto, // TODO: Get from JWT token
   ): Promise<{ liked: boolean }> {
     return this.likeApiService.toggleLike(postId, userId);
   }
@@ -50,7 +51,7 @@ export class LikeApiController {
   @Get(':postId/check')
   public async checkLike(
     @Param('postId') postId: string,
-    @Query('userId') userId: string,
+    @Query() { userId }: UserIdQueryDto,
   ): Promise<{ liked: boolean }> {
     const liked = await this.likeApiService.isLiked(postId, userId);
     return { liked };
