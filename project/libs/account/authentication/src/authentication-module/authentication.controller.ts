@@ -7,6 +7,7 @@ import { UserRdo } from '../rdo/user.rdo';
 import { LoggedUserRdo } from '../rdo/logged-user.rdo';
 import { AuthenticationResponseMessage } from './authentication.constant';
 import { userToRdo, loggedUserToRdo } from './authentication.mapper';
+import { MongoIdValidationPipe } from '@project/pipes';
 
 @ApiTags('authentication')
 @Controller('auth')
@@ -60,7 +61,7 @@ export class AuthenticationController {
     })
     @ApiParam({ name: 'id', description: 'User ID' })
     @Get('user/:id')
-    public async getUser(@Param('id') id: string): Promise<UserRdo> {
+    public async getUser(@Param('id', MongoIdValidationPipe) id: string): Promise<UserRdo> {
       const user = await this.authService.getUser(id);
       return userToRdo(user);
     }

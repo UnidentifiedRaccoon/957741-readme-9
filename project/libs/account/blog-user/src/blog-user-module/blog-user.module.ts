@@ -12,6 +12,6 @@ import { BlogUserModel, BlogUserSchema } from './blog-user.model';
   ])],
   controllers: [],
   providers: [BlogUserRepository, BlogUserFactory],
-  exports: [BlogUserRepository],
+  exports: [BlogUserRepository, BlogUserFactory],
 })
 export class BlogUserModule {}

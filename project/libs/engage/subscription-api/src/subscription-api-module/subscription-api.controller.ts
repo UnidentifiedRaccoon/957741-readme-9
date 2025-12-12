@@ -10,6 +10,7 @@ import {
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { SubscriptionApiService } from './subscription-api.service';
 import { CheckSubscriptionQueryDto, FollowerIdQueryDto } from '@project/helpers';
+import { MongoIdValidationPipe } from '@project/pipes';
 
 @ApiTags('subscriptions')
 @Controller('subscriptions')
@@ -37,7 +38,7 @@ export class SubscriptionApiController {
   })
   @Post(':userId')
   public async subscribe(
-    @Param('userId') followingId: string,
+    @Param('userId', MongoIdValidationPipe) followingId: string,
     @Query() { followerId }: FollowerIdQueryDto, // TODO: Get from JWT token
   ): Promise<{ subscribed: boolean }> {
     return this.subscriptionApiService.subscribe(followerId, followingId);
@@ -51,7 +52,7 @@ export class SubscriptionApiController {
   })
   @Delete(':userId')
   public async unsubscribe(
-    @Param('userId') followingId: string,
+    @Param('userId', MongoIdValidationPipe) followingId: string,
     @Query() { followerId }: FollowerIdQueryDto, // TODO: Get from JWT token
   ): Promise<{ subscribed: boolean }> {
     return this.subscriptionApiService.unsubscribe(followerId, followingId);
@@ -64,7 +65,9 @@ export class SubscriptionApiController {
     description: 'Following list retrieved',
   })
   @Get(':userId/following')
-  public async getFollowing(@Param('userId') userId: string): Promise<{ userIds: string[] }> {
+  public async getFollowing(
+    @Param('userId', MongoIdValidationPipe) userId: string,
+  ): Promise<{ userIds: string[] }> {
     const userIds = await this.subscriptionApiService.getFollowingIds(userId);
     return { userIds };
   }
@@ -76,7 +79,9 @@ export class SubscriptionApiController {
     description: 'Followers list retrieved',
   })
   @Get(':userId/followers')
-  public async getFollowers(@Param('userId') userId: string): Promise<{ userIds: string[] }> {
+  public async getFollowers(
+    @Param('userId', MongoIdValidationPipe) userId: string,
+  ): Promise<{ userIds: string[] }> {
     const userIds = await this.subscriptionApiService.getFollowerIds(userId);
     return { userIds };
   }
@@ -88,7 +93,9 @@ export class SubscriptionApiController {
     description: 'Followers count retrieved',
   })
   @Get(':userId/followers/count')
-  public async countFollowers(@Param('userId') userId: string): Promise<{ count: number }> {
+  public async countFollowers(
+    @Param('userId', MongoIdValidationPipe) userId: string,
+  ): Promise<{ count: number }> {
     const count = await this.subscriptionApiService.countFollowers(userId);
     return { count };
   }
@@ -100,7 +107,9 @@ export class SubscriptionApiController {
     description: 'Following count retrieved',
   })
   @Get(':userId/following/count')
-  public async countFollowing(@Param('userId') userId: string): Promise<{ count: number }> {
+  public async countFollowing(
+    @Param('userId', MongoIdValidationPipe) userId: string,
+  ): Promise<{ count: number }> {
     const count = await this.subscriptionApiService.countFollowing(userId);
     return { count };
   }
