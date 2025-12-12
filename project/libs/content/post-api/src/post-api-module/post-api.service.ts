@@ -1,5 +1,5 @@
 import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { PostRepository, PostEntity, PostQuery, PostFilter } from '@project/content-post';
+import { PostRepository, PostEntity, PostQuery, PostFilter, PostFactory } from '@project/content-post';
 import { PostStatus } from '@project/core';
 import { CreatePostDto } from '../dto/create-post.dto';
 import { UpdatePostDto } from '../dto/update-post.dto';
@@ -11,7 +11,10 @@ function normalizeTags(tags?: string[]): { name: string }[] | undefined {
 
 @Injectable()
 export class PostApiService {
-  constructor(private readonly postRepository: PostRepository) {}
+  constructor(
+    private readonly postRepository: PostRepository,
+    private readonly postFactory: PostFactory,
+  ) {}
 
   private assertOwnership(post: PostEntity, userId: string): void {
     if (post.userId !== userId) {
@@ -20,7 +23,7 @@ export class PostApiService {
   }
 
   public async createPost(dto: CreatePostDto, userId: string): Promise<PostEntity> {
-    const postEntity = new PostEntity({
+    const postEntity = this.postFactory.create({
       type: dto.type,
       status: PostStatus.PUBLISHED,
       userId,
@@ -105,7 +108,7 @@ export class PostApiService {
       throw new ConflictException(REPOST_ALREADY_EXISTS);
     }
 
-    const repostEntity = new PostEntity({
+    const repostEntity = this.postFactory.create({
       type: originalPost.type,
       status: PostStatus.PUBLISHED,
       userId,

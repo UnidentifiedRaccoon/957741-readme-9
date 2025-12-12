@@ -60,7 +60,7 @@ export class SubscriptionRepository extends BasePostgresRepository<SubscriptionE
       return { subscribed: true };
     }
 
-    const entity = new SubscriptionEntity({ followerId, followingId });
+    const entity = this.entityFactory.create({ followerId, followingId });
     await this.save(entity);
     return { subscribed: true };
   }

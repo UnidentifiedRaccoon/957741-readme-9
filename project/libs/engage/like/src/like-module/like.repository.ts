@@ -56,7 +56,7 @@ export class LikeRepository extends BasePostgresRepository<LikeEntity, Like> {
       return { liked: false };
     }
 
-    const likeEntity = new LikeEntity({ postId, userId });
+    const likeEntity = this.entityFactory.create({ postId, userId });
     await this.save(likeEntity);
     return { liked: true };
   }

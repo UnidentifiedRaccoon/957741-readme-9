@@ -16,8 +16,6 @@ import { CommentQueryDto } from '../dto/comment-query.dto';
 import { CommentRdo } from '../rdo/comment.rdo';
 import { fillDto } from '@project/helpers';
 
-type PlainObject = Record<string, unknown>;
-
 @ApiTags('comments')
 @Controller('comments')
 export class CommentApiController {
@@ -37,7 +35,7 @@ export class CommentApiController {
     @Query('userId') userId: string, // TODO: Get from JWT token
   ): Promise<CommentRdo> {
     const comment = await this.commentApiService.createComment(postId, dto, userId);
-    return fillDto(CommentRdo, comment.toPOJO() as unknown as PlainObject);
+    return fillDto(CommentRdo, comment.toPOJO());
   }
 
   @ApiOperation({ summary: 'Get comments for a post' })
@@ -53,7 +51,7 @@ export class CommentApiController {
     @Query() query: CommentQueryDto,
   ): Promise<CommentRdo[]> {
     const comments = await this.commentApiService.getPostComments(postId, query);
-    return comments.map((comment) => fillDto(CommentRdo, comment.toPOJO() as unknown as PlainObject));
+    return comments.map((comment) => fillDto(CommentRdo, comment.toPOJO()));
   }
 
   @ApiOperation({ summary: 'Get comments count for a post' })
