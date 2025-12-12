@@ -44,23 +44,42 @@ export class PostApiService {
     const post = await this.getPost(id);
     this.assertOwnership(post, userId);
 
-    if (dto.title !== undefined) {
+    let hasChanges = false;
+
+    if (dto.title !== undefined && dto.title !== post.title) {
       post.title = dto.title;
+      hasChanges = true;
     }
 
-    if (dto.status !== undefined) {
+    if (dto.status !== undefined && dto.status !== post.status) {
       post.status = dto.status;
       if (dto.status === PostStatus.PUBLISHED) {
         post.publishedAt = new Date();
       }
+      hasChanges = true;
     }
 
     if (dto.extraFields !== undefined) {
-      post.extraFields = dto.extraFields;
+      const currentJson = JSON.stringify(post.extraFields);
+      const newJson = JSON.stringify(dto.extraFields);
+      if (currentJson !== newJson) {
+        post.extraFields = dto.extraFields;
+        hasChanges = true;
+      }
     }
 
     if (dto.tags !== undefined) {
-      post.tags = normalizeTags(dto.tags);
+      const normalizedTags = normalizeTags(dto.tags);
+      const currentTagNames = post.tags?.map((t) => t.name).sort() ?? [];
+      const newTagNames = normalizedTags?.map((t) => t.name).sort() ?? [];
+      if (JSON.stringify(currentTagNames) !== JSON.stringify(newTagNames)) {
+        post.tags = normalizedTags;
+        hasChanges = true;
+      }
+    }
+
+    if (!hasChanges) {
+      return post;
     }
 
     return this.postRepository.update(post);
