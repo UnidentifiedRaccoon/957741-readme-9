@@ -15,7 +15,6 @@ import { PostApiService } from './post-api.service';
 import { CreatePostDto } from '../dto/create-post.dto';
 import { UpdatePostDto } from '../dto/update-post.dto';
 import { PostQueryDto } from '../dto/post-query.dto';
-import { parsePostQueryDto } from '../dto/post-query.parser';
 import { PostRdo } from '../rdo/post.rdo';
 import { PostWithPaginationRdo } from '../rdo/post-with-pagination.rdo';
 import { postToRdo, postsToRdo, paginationToRdo } from './post-api.mapper';
@@ -52,8 +51,7 @@ export class PostApiController {
     @Body() body: { userIds: string[] },
     @Query() dto: PostQueryDto,
   ): Promise<PostWithPaginationRdo> {
-    const { query } = parsePostQueryDto(dto);
-    const result = await this.postApiService.getFeed(body.userIds, query);
+    const result = await this.postApiService.getFeed(body.userIds, dto);
     return paginationToRdo(result);
   }
 
@@ -69,8 +67,7 @@ export class PostApiController {
     @Param('userId') userId: string,
     @Query() dto: PostQueryDto,
   ): Promise<PostWithPaginationRdo> {
-    const { query } = parsePostQueryDto(dto);
-    const result = await this.postApiService.getUserPosts(userId, query);
+    const result = await this.postApiService.getUserPosts(userId, dto);
     return paginationToRdo(result);
   }
 
@@ -205,8 +202,8 @@ export class PostApiController {
   })
   @Get()
   public async getMany(@Query() dto: PostQueryDto): Promise<PostWithPaginationRdo> {
-    const { filter, query } = parsePostQueryDto(dto);
-    const result = await this.postApiService.getPublishedPosts(filter, query);
+    const filter = { userId: dto.userId, type: dto.type, tag: dto.tag };
+    const result = await this.postApiService.getPublishedPosts(filter, dto);
     return paginationToRdo(result);
   }
 }

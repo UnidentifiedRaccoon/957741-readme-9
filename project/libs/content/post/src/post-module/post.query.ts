@@ -1,3 +1,4 @@
+import { SortDirection } from '@project/core';
 import {
   DEFAULT_POST_COUNT_LIMIT,
   DEFAULT_PAGE,
@@ -5,7 +6,6 @@ import {
   DEFAULT_SORT_DIRECTION,
 } from './post.constant';
 
-export type SortDirection = 'asc' | 'desc';
 export type SortBy = 'publishedAt' | 'likesCount' | 'commentsCount';
 
 export interface PostQuery {
@@ -26,8 +26,8 @@ export interface NormalizedPostQuery {
 export function normalizePostQuery(query?: PostQuery): NormalizedPostQuery {
   const limit = query?.limit ?? DEFAULT_POST_COUNT_LIMIT;
   const page = query?.page ?? DEFAULT_PAGE;
-  const sortBy = (query?.sortBy ?? DEFAULT_SORT_BY) as SortBy;
-  const sortDirection = (query?.sortDirection ?? DEFAULT_SORT_DIRECTION) as SortDirection;
+  const sortBy = query?.sortBy ?? DEFAULT_SORT_BY;
+  const sortDirection = query?.sortDirection ?? DEFAULT_SORT_DIRECTION;
 
   return {
     limit,
