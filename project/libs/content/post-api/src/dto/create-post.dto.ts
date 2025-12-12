@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsArray, IsEnum, IsObject, IsOptional, IsString, ArrayMaxSize, Length } from 'class-validator';
 import { PostType } from '@project/core';
 
 export class CreatePostDto {
@@ -7,18 +8,23 @@ export class CreatePostDto {
     enum: PostType,
     example: PostType.TEXT,
   })
+  @IsEnum(PostType)
   public type: PostType;
 
   @ApiPropertyOptional({
     description: 'Post title (required for VIDEO and TEXT types)',
     example: 'My awesome blog post title',
   })
+  @IsString()
+  @IsOptional()
   public title?: string;
 
   @ApiPropertyOptional({
     description: 'Extra fields depending on post type (videoUrl, announcement, text, quoteText, quoteAuthor, photoUrl, linkUrl, linkDescription)',
     example: { announcement: 'Short preview', text: 'Full content here...' },
   })
+  @IsObject()
+  @IsOptional()
   public extraFields?: Record<string, unknown>;
 
   @ApiPropertyOptional({
@@ -26,6 +32,11 @@ export class CreatePostDto {
     example: ['javascript', 'nodejs'],
     type: [String],
   })
+  @IsArray()
+  @IsString({ each: true })
+  @ArrayMaxSize(8)
+  @Length(3, 10, { each: true })
+  @IsOptional()
   public tags?: string[];
 }
 

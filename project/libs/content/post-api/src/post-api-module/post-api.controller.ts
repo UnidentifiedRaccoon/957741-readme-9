@@ -17,8 +17,8 @@ import { UpdatePostDto } from '../dto/update-post.dto';
 import { PostQueryDto } from '../dto/post-query.dto';
 import { parsePostQueryDto } from '../dto/post-query.parser';
 import { PostRdo } from '../rdo/post.rdo';
-import { PostApiResponseMessage } from './post-api-response-message.constant';
 import { postToRdo, postsToRdo } from './post-api.mapper';
+import { PostApiResponseMessage } from './post-api.constant';
 
 @ApiTags('posts')
 @Controller('posts')
