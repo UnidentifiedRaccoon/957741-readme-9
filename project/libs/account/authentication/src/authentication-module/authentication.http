@@ -1,18 +1,14 @@
-# Create a new user
-POST http://localhost:3000/api/auth/register HTTP/1.1
-Content-Type: application/json
-
-{
-  "email": "user@notfound.local",
-  "dateBirth": "2012-02-22",
-  "firstname": "Keks",
-  "lastname": "Smith",
-  "password": "123456"
-}
+# =============================================
+# Seeded Users (created by running: nx run account-service:db:seed)
+# =============================================
+# User 1: user@notfound.local / 123456 - ID: 658170cbb954e9f5b905ccf4
+# User 2: alice@example.com / qwerty - ID: 6581762309c030b503e30512
+# User 3: bob@example.com / password123 - ID: 6581762309c030b503e30513
+# =============================================
 
 ###
 
-# Login user by email and password
+# Login with seeded user (user@notfound.local)
 POST http://localhost:3000/api/auth/login HTTP/1.1
 Content-Type: application/json
 
@@ -23,8 +19,58 @@ Content-Type: application/json
 
 ###
 
-# Get user by ID (replace with actual user ID after registration)
-GET http://localhost:3000/api/auth/user/d2258182-2d62-410d-a8cd-dcdd67886c9b HTTP/1.1
+# Get seeded user by ID (Keks Smith)
+GET http://localhost:3000/api/auth/user/658170cbb954e9f5b905ccf4 HTTP/1.1
+
+###
+
+# Login with seeded user (alice@example.com)
+POST http://localhost:3000/api/auth/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "alice@example.com",
+  "password": "qwerty"
+}
+
+###
+
+# Get seeded user by ID (Alice Johnson)
+GET http://localhost:3000/api/auth/user/6581762309c030b503e30512 HTTP/1.1
+
+###
+
+# Login with seeded user (bob@example.com)
+POST http://localhost:3000/api/auth/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "bob@example.com",
+  "password": "password123"
+}
+
+###
+
+# Get seeded user by ID (Bob Williams)
+GET http://localhost:3000/api/auth/user/6581762309c030b503e30513 HTTP/1.1
+
+###
+
+# =============================================
+# Registration Tests
+# =============================================
+
+# Register a new user
+POST http://localhost:3000/api/auth/register HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "newuser@example.com",
+  "dateBirth": "1990-05-15",
+  "firstname": "New",
+  "lastname": "User",
+  "password": "newpassword"
+}
 
 ###
 
@@ -41,6 +87,10 @@ Content-Type: application/json
 }
 
 ###
+
+# =============================================
+# Error Cases
+# =============================================
 
 # Test: Try to login with wrong password (should fail with 401 Unauthorized)
 POST http://localhost:3000/api/auth/login HTTP/1.1
@@ -65,32 +115,7 @@ Content-Type: application/json
 ###
 
 # Test: Try to get non-existing user (should fail with 404 Not Found)
-GET http://localhost:3000/api/auth/user/00000000-0000-0000-0000-000000000000 HTTP/1.1
-
-###
-
-# Register another user
-POST http://localhost:3000/api/auth/register HTTP/1.1
-Content-Type: application/json
-
-{
-  "email": "alice@example.com",
-  "dateBirth": "1995-08-20",
-  "firstname": "Alice",
-  "lastname": "Johnson",
-  "password": "secure123"
-}
-
-###
-
-# Login with the second user
-POST http://localhost:3000/api/auth/login HTTP/1.1
-Content-Type: application/json
-
-{
-  "email": "alice@example.com",
-  "password": "secure123"
-}
+GET http://localhost:3000/api/auth/user/000000000000000000000000 HTTP/1.1
 
 ###
 

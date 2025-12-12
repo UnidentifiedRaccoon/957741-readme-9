@@ -33,6 +33,13 @@
           "buildTarget": "account-service:build:production"
         }
       }
+    },
+    "db:seed": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx ts-node src/seed.ts",
+        "cwd": "libs/account/blog-user"
+      }
     }
   }
 }

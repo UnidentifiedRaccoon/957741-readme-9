@@ -5,7 +5,7 @@ import { CreateUserDto } from '../dto/create-user.dto';
 import { LoginUserDto } from '../dto/login-user.dto';
 import { UserRdo } from '../rdo/user.rdo';
 import { LoggedUserRdo } from '../rdo/logged-user.rdo';
-import { AuthenticationResponseMessage } from './authentication-response-message.constant';
+import { AuthenticationResponseMessage } from './authentication.constant';
 
 @ApiTags('authentication')
 @Controller('auth')
