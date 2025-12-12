@@ -6,7 +6,7 @@ import { LoginUserDto } from '../dto/login-user.dto';
 import { UserRdo } from '../rdo/user.rdo';
 import { LoggedUserRdo } from '../rdo/logged-user.rdo';
 import { AuthenticationResponseMessage } from './authentication.constant';
-import { fillDto } from '@project/helpers';
+import { userToRdo, loggedUserToRdo } from './authentication.mapper';
 
 @ApiTags('authentication')
 @Controller('auth')
@@ -25,9 +25,9 @@ export class AuthenticationController {
       description: AuthenticationResponseMessage.UserExists,
     })
     @Post('register')
-    public async create(@Body() dto: CreateUserDto) {
+    public async create(@Body() dto: CreateUserDto): Promise<UserRdo> {
       const newUser = await this.authService.register(dto);
-      return fillDto(UserRdo, newUser.toPOJO());
+      return userToRdo(newUser);
     }
 
     @ApiResponse({
@@ -44,9 +44,9 @@ export class AuthenticationController {
       description: AuthenticationResponseMessage.UserNotFound,
     })
     @Post('login')
-    public async login(@Body() dto: LoginUserDto) {
+    public async login(@Body() dto: LoginUserDto): Promise<LoggedUserRdo> {
       const user = await this.authService.login(dto);
-      return fillDto(LoggedUserRdo, user.toPOJO());
+      return loggedUserToRdo(user);
     }   
 
     @ApiResponse({
@@ -58,9 +58,10 @@ export class AuthenticationController {
       status: HttpStatus.NOT_FOUND,
       description: AuthenticationResponseMessage.UserNotFound,
     })
+    @ApiParam({ name: 'id', description: 'User ID' })
     @Get('user/:id')
-    public async getUser(@Param('id') id: string) {
+    public async getUser(@Param('id') id: string): Promise<UserRdo> {
       const user = await this.authService.getUser(id);
-      return fillDto(UserRdo, user.toPOJO());
+      return userToRdo(user);
     }
   }

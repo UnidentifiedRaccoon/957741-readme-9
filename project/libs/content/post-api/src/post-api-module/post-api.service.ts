@@ -1,9 +1,9 @@
-import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable } from '@nestjs/common';
 import { PostRepository, PostEntity, PostQuery, PostFilter, PostFactory } from '@project/content-post';
-import { PostStatus } from '@project/core';
+import { PostStatus, PaginationResult } from '@project/core';
 import { CreatePostDto } from '../dto/create-post.dto';
 import { UpdatePostDto } from '../dto/update-post.dto';
-import { POST_NOT_FOUND, POST_NOT_OWNER, REPOST_ALREADY_EXISTS, CANNOT_REPOST_OWN } from './post-api.constant';
+import { POST_NOT_OWNER, REPOST_ALREADY_EXISTS, CANNOT_REPOST_OWN } from './post-api.constant';
 
 function normalizeTags(tags?: string[]): { name: string }[] | undefined {
   return tags?.map((name) => ({ name: name.toLowerCase() }));
@@ -37,11 +37,7 @@ export class PostApiService {
   }
 
   public async getPost(id: string): Promise<PostEntity> {
-    const post = await this.postRepository.findById(id);
-    if (!post) {
-      throw new NotFoundException(POST_NOT_FOUND);
-    }
-    return post;
+    return this.postRepository.findById(id);
   }
 
   public async updatePost(id: string, dto: UpdatePostDto, userId: string): Promise<PostEntity> {
@@ -76,11 +72,11 @@ export class PostApiService {
     await this.postRepository.deleteById(id);
   }
 
-  public async getPublishedPosts(filter?: PostFilter, query?: PostQuery): Promise<PostEntity[]> {
+  public async getPublishedPosts(filter?: PostFilter, query?: PostQuery): Promise<PaginationResult<PostEntity>> {
     return this.postRepository.findPublished(filter, query);
   }
 
-  public async getUserPosts(userId: string, query?: PostQuery): Promise<PostEntity[]> {
+  public async getUserPosts(userId: string, query?: PostQuery): Promise<PaginationResult<PostEntity>> {
     return this.postRepository.findByUserId(userId, query);
   }
 
@@ -88,7 +84,7 @@ export class PostApiService {
     return this.postRepository.findDraftsByUserId(userId);
   }
 
-  public async getFeed(userIds: string[], query?: PostQuery): Promise<PostEntity[]> {
+  public async getFeed(userIds: string[], query?: PostQuery): Promise<PaginationResult<PostEntity>> {
     return this.postRepository.findByUserIds(userIds, query);
   }
 
