@@ -51,7 +51,7 @@ export class CommentRepository extends BasePostgresRepository<CommentEntity, Com
       orderBy: { createdAt: 'desc' },
     });
 
-    return records.map(this.createEntityFromDocument)
+    return records.map((record) => this.createEntityFromDocument(record)).filter((entity): entity is CommentEntity => entity !== null);
   }
 
   public async countByPostId(postId: string): Promise<number> {

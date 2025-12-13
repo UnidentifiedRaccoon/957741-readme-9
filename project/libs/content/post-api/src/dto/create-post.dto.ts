@@ -34,8 +34,8 @@ export class CreatePostDto {
   })
   @IsArray()
   @IsString({ each: true })
-  @ArrayMaxSize(8)
-  @Length(3, 10, { each: true })
+  @ArrayMaxSize(8, { message: 'tags must contain no more than 8 elements' })
+  @Length(3, 10, { each: true, message: 'each tag must be between 3 and 10 characters' })
   @IsOptional()
   public tags?: string[];
 }
