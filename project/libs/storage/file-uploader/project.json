@@ -1,0 +1,20 @@
+{
+  "name": "file-uploader",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/storage/file-uploader/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/storage/file-uploader",
+        "tsConfig": "libs/storage/file-uploader/tsconfig.lib.json",
+        "packageJson": "libs/storage/file-uploader/package.json",
+        "main": "libs/storage/file-uploader/src/index.ts",
+        "assets": ["libs/storage/file-uploader/*.md"]
+      }
+    }
+  }
+}

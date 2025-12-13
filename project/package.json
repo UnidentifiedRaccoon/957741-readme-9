@@ -44,6 +44,7 @@
     "@swc-node/register": "1.9.2",
     "@swc/core": "1.5.29",
     "@swc/helpers": "0.5.17",
+    "@types/multer": "2.0.0",
     "@types/node": "18.16.20",
     "@types/passport": "1.0.17",
     "@types/passport-jwt": "4.0.1",
