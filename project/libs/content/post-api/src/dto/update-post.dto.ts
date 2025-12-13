@@ -1,4 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsArray, IsEnum, IsObject, IsOptional, IsString, ArrayMaxSize, Length } from 'class-validator';
 import { PostStatus } from '@project/core';
 
 export class UpdatePostDto {
@@ -6,6 +7,8 @@ export class UpdatePostDto {
     description: 'Post title',
     example: 'Updated post title',
   })
+  @IsString()
+  @IsOptional()
   public title?: string;
 
   @ApiPropertyOptional({
@@ -13,12 +16,16 @@ export class UpdatePostDto {
     enum: PostStatus,
     example: PostStatus.PUBLISHED,
   })
+  @IsEnum(PostStatus)
+  @IsOptional()
   public status?: PostStatus;
 
   @ApiPropertyOptional({
     description: 'Extra fields depending on post type',
     example: { announcement: 'Updated preview', text: 'Updated content...' },
   })
+  @IsObject()
+  @IsOptional()
   public extraFields?: Record<string, unknown>;
 
   @ApiPropertyOptional({
@@ -26,6 +33,11 @@ export class UpdatePostDto {
     example: ['typescript', 'nestjs'],
     type: [String],
   })
+  @IsArray()
+  @IsString({ each: true })
+  @ArrayMaxSize(8)
+  @Length(3, 10, { each: true })
+  @IsOptional()
   public tags?: string[];
 }
 

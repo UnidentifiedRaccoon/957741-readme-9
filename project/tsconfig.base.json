@@ -24,19 +24,22 @@
       "@project/content-config": ["libs/content/config/src/index.ts"],
       "@project/content-models": ["libs/content/models/src/index.ts"],
       "@project/content-post": ["libs/content/post/src/index.ts"],
-      "@project/content-tag": ["libs/content/tag/src/index.ts"],
       "@project/content-post-api": ["libs/content/post-api/src/index.ts"],
+      "@project/content-tag": ["libs/content/tag/src/index.ts"],
       "@project/core": ["libs/shared/core/src/index.ts"],
       "@project/data-access": ["libs/shared/data-access/src/index.ts"],
-      "@project/helpers": ["libs/shared/helpers/src/index.ts"],
+      "@project/engage-comment": ["libs/engage/comment/src/index.ts"],
+      "@project/engage-comment-api": ["libs/engage/comment-api/src/index.ts"],
       "@project/engage-config": ["libs/engage/config/src/index.ts"],
       "@project/engage-like": ["libs/engage/like/src/index.ts"],
-      "@project/engage-comment": ["libs/engage/comment/src/index.ts"],
-      "@project/engage-subscription": ["libs/engage/subscription/src/index.ts"],
       "@project/engage-like-api": ["libs/engage/like-api/src/index.ts"],
-      "@project/engage-comment-api": ["libs/engage/comment-api/src/index.ts"],
-      "@project/engage-subscription-api": ["libs/engage/subscription-api/src/index.ts"],
-      "@project/engage-models": ["libs/engage/models/src/index.ts"]
+      "@project/engage-models": ["libs/engage/models/src/index.ts"],
+      "@project/engage-subscription": ["libs/engage/subscription/src/index.ts"],
+      "@project/engage-subscription-api": [
+        "libs/engage/subscription-api/src/index.ts"
+      ],
+      "@project/helpers": ["libs/shared/helpers/src/index.ts"],
+      "@project/pipes": ["libs/shared/pipes/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -1,12 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { BasePostgresRepository } from '@project/data-access';
 import { PostEntity } from './post.entity';
 import { PostFactory } from './post.factory';
 import { PrismaClientService } from '@project/content-models';
-import { PostStatus, PostType, Post, Tag } from '@project/core';
+import { PostStatus, PostType, Post, Tag, PaginationResult } from '@project/core';
 import { DEFAULT_SEARCH_COUNT_LIMIT } from './post.constant';
 import { PostQuery, normalizePostQuery } from './post.query';
-import { PostFilter, postFilterToPrismaFilter } from './post.filter';
+import { PostFilter, postFilterToPrismaFilter, PrismaPostWhereInput } from './post.filter';
 
 interface PrismaPostRecord {
   id: string;
@@ -93,13 +93,17 @@ export class PostRepository extends BasePostgresRepository<PostEntity, Post> {
     return result;
   }
 
-  public override async findById(id: string): Promise<PostEntity | null> {
+  public override async findById(id: string): Promise<PostEntity> {
     const record = await this.client.post.findUnique({
       where: { id },
       include: { tags: true },
     });
 
-    return this.createEntity(record as PrismaPostRecord | null);
+    if (!record) {
+      throw new NotFoundException(`Post with id ${id} not found.`);
+    }
+
+    return this.createEntityFromDocument(this.adaptPrismaRecord(record as PrismaPostRecord));
   }
 
   public override async update(entity: PostEntity): Promise<PostEntity> {
@@ -130,37 +134,64 @@ export class PostRepository extends BasePostgresRepository<PostEntity, Post> {
     await this.client.post.delete({ where: { id } });
   }
 
-  public async findPublished(filter?: PostFilter, query?: PostQuery): Promise<PostEntity[]> {
-    const { limit, offset, sortBy, sortDirection } = normalizePostQuery(query);
-    const where = postFilterToPrismaFilter(filter);
-
-    const records = await this.client.post.findMany({
-      where,
-      take: limit,
-      skip: offset,
-      orderBy: { [sortBy]: sortDirection },
-      include: { tags: true },
-    });
-
-    return records
-      .map((record) => this.createEntity(record as PrismaPostRecord))
-      .filter((entity): entity is PostEntity => entity !== null);
+  private async getPostCount(where: PrismaPostWhereInput): Promise<number> {
+    return this.client.post.count({ where });
   }
 
-  public async findByUserId(userId: string, query?: PostQuery): Promise<PostEntity[]> {
-    const { limit, offset } = normalizePostQuery(query);
+  private calculatePostsPage(totalCount: number, limit: number): number {
+    return Math.ceil(totalCount / limit);
+  }
 
-    const records = await this.client.post.findMany({
-      where: { userId, status: PostStatus.PUBLISHED },
-      take: limit,
-      skip: offset,
-      orderBy: { publishedAt: 'desc' },
-      include: { tags: true },
-    });
+  public async findPublished(filter?: PostFilter, query?: PostQuery): Promise<PaginationResult<PostEntity>> {
+    const { limit, page, offset, sortBy, sortDirection } = normalizePostQuery(query);
+    const where = postFilterToPrismaFilter(filter);
 
-    return records
-      .map((record) => this.createEntity(record as PrismaPostRecord))
-      .filter((entity): entity is PostEntity => entity !== null);
+    const [records, totalItems] = await Promise.all([
+      this.client.post.findMany({
+        where,
+        take: limit,
+        skip: offset,
+        orderBy: { [sortBy]: sortDirection },
+        include: { tags: true },
+      }),
+      this.getPostCount(where),
+    ]);
+
+    return {
+      entities: records
+        .map((record) => this.createEntity(record as PrismaPostRecord))
+        .filter((entity): entity is PostEntity => entity !== null),
+      currentPage: page,
+      totalPages: this.calculatePostsPage(totalItems, limit),
+      itemsPerPage: limit,
+      totalItems,
+    };
+  }
+
+  public async findByUserId(userId: string, query?: PostQuery): Promise<PaginationResult<PostEntity>> {
+    const { limit, page, offset } = normalizePostQuery(query);
+    const where: PrismaPostWhereInput = { userId, status: PostStatus.PUBLISHED };
+
+    const [records, totalItems] = await Promise.all([
+      this.client.post.findMany({
+        where,
+        take: limit,
+        skip: offset,
+        orderBy: { publishedAt: 'desc' },
+        include: { tags: true },
+      }),
+      this.getPostCount(where),
+    ]);
+
+    return {
+      entities: records
+        .map((record) => this.createEntity(record as PrismaPostRecord))
+        .filter((entity): entity is PostEntity => entity !== null),
+      currentPage: page,
+      totalPages: this.calculatePostsPage(totalItems, limit),
+      itemsPerPage: limit,
+      totalItems,
+    };
   }
 
   public async findDraftsByUserId(userId: string): Promise<PostEntity[]> {
@@ -175,23 +206,33 @@ export class PostRepository extends BasePostgresRepository<PostEntity, Post> {
       .filter((entity): entity is PostEntity => entity !== null);
   }
 
-  public async findByUserIds(userIds: string[], query?: PostQuery): Promise<PostEntity[]> {
-    const { limit, offset, sortBy, sortDirection } = normalizePostQuery(query);
+  public async findByUserIds(userIds: string[], query?: PostQuery): Promise<PaginationResult<PostEntity>> {
+    const { limit, page, offset, sortBy, sortDirection } = normalizePostQuery(query);
+    const where = {
+      userId: { in: userIds },
+      status: PostStatus.PUBLISHED,
+    };
 
-    const records = await this.client.post.findMany({
-      where: {
-        userId: { in: userIds },
-        status: PostStatus.PUBLISHED,
-      },
-      take: limit,
-      skip: offset,
-      orderBy: { [sortBy]: sortDirection },
-      include: { tags: true },
-    });
+    const [records, totalItems] = await Promise.all([
+      this.client.post.findMany({
+        where,
+        take: limit,
+        skip: offset,
+        orderBy: { [sortBy]: sortDirection },
+        include: { tags: true },
+      }),
+      this.client.post.count({ where }),
+    ]);
 
-    return records
-      .map((record) => this.createEntity(record as PrismaPostRecord))
-      .filter((entity): entity is PostEntity => entity !== null);
+    return {
+      entities: records
+        .map((record) => this.createEntity(record as PrismaPostRecord))
+        .filter((entity): entity is PostEntity => entity !== null),
+      currentPage: page,
+      totalPages: this.calculatePostsPage(totalItems, limit),
+      itemsPerPage: limit,
+      totalItems,
+    };
   }
 
   public async searchByTitle(searchQuery: string, limit: number = DEFAULT_SEARCH_COUNT_LIMIT): Promise<PostEntity[]> {

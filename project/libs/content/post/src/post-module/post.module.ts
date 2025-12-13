@@ -6,7 +6,6 @@ import { PostFactory } from './post.factory';
 @Module({
   imports: [PrismaClientModule],
   providers: [PostRepository, PostFactory],
-  exports: [PostRepository],
+  exports: [PostRepository, PostFactory],
 })
 export class PostModule {}
-

@@ -6,5 +6,6 @@ export { UpdatePostDto } from './dto/update-post.dto';
 export { PostQueryDto } from './dto/post-query.dto';
 
 export { PostRdo } from './rdo/post.rdo';
+export { PostWithPaginationRdo } from './rdo/post-with-pagination.rdo';
 export { TagRdo } from './rdo/tag.rdo';
 

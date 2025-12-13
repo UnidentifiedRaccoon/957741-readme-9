@@ -1,9 +1,9 @@
-import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { PostRepository, PostEntity, PostQuery, PostFilter } from '@project/content-post';
-import { PostStatus } from '@project/core';
+import { ConflictException, ForbiddenException, Injectable, Logger } from '@nestjs/common';
+import { PostRepository, PostEntity, PostQuery, PostFilter, PostFactory } from '@project/content-post';
+import { PostStatus, PaginationResult } from '@project/core';
 import { CreatePostDto } from '../dto/create-post.dto';
 import { UpdatePostDto } from '../dto/update-post.dto';
-import { POST_NOT_FOUND, POST_NOT_OWNER, REPOST_ALREADY_EXISTS, CANNOT_REPOST_OWN } from './post-api.constant';
+import { POST_NOT_OWNER, REPOST_ALREADY_EXISTS, CANNOT_REPOST_OWN } from './post-api.constant';
 
 function normalizeTags(tags?: string[]): { name: string }[] | undefined {
   return tags?.map((name) => ({ name: name.toLowerCase() }));
@@ -11,7 +11,12 @@ function normalizeTags(tags?: string[]): { name: string }[] | undefined {
 
 @Injectable()
 export class PostApiService {
-  constructor(private readonly postRepository: PostRepository) {}
+  private readonly logger = new Logger(PostApiService.name);
+
+  constructor(
+    private readonly postRepository: PostRepository,
+    private readonly postFactory: PostFactory,
+  ) {}
 
   private assertOwnership(post: PostEntity, userId: string): void {
     if (post.userId !== userId) {
@@ -20,7 +25,7 @@ export class PostApiService {
   }
 
   public async createPost(dto: CreatePostDto, userId: string): Promise<PostEntity> {
-    const postEntity = new PostEntity({
+    const postEntity = this.postFactory.create({
       type: dto.type,
       status: PostStatus.PUBLISHED,
       userId,
@@ -34,34 +39,49 @@ export class PostApiService {
   }
 
   public async getPost(id: string): Promise<PostEntity> {
-    const post = await this.postRepository.findById(id);
-    if (!post) {
-      throw new NotFoundException(POST_NOT_FOUND);
-    }
-    return post;
+    return this.postRepository.findById(id);
   }
 
   public async updatePost(id: string, dto: UpdatePostDto, userId: string): Promise<PostEntity> {
     const post = await this.getPost(id);
     this.assertOwnership(post, userId);
 
-    if (dto.title !== undefined) {
+    let hasChanges = false;
+
+    if (dto.title !== undefined && dto.title !== post.title) {
       post.title = dto.title;
+      hasChanges = true;
     }
 
-    if (dto.status !== undefined) {
+    if (dto.status !== undefined && dto.status !== post.status) {
       post.status = dto.status;
       if (dto.status === PostStatus.PUBLISHED) {
         post.publishedAt = new Date();
       }
+      hasChanges = true;
     }
 
     if (dto.extraFields !== undefined) {
-      post.extraFields = dto.extraFields;
+      const currentJson = JSON.stringify(post.extraFields);
+      const newJson = JSON.stringify(dto.extraFields);
+      if (currentJson !== newJson) {
+        post.extraFields = dto.extraFields;
+        hasChanges = true;
+      }
     }
 
     if (dto.tags !== undefined) {
-      post.tags = normalizeTags(dto.tags);
+      const normalizedTags = normalizeTags(dto.tags);
+      const currentTagNames = post.tags?.map((t) => t.name).sort() ?? [];
+      const newTagNames = normalizedTags?.map((t) => t.name).sort() ?? [];
+      if (JSON.stringify(currentTagNames) !== JSON.stringify(newTagNames)) {
+        post.tags = normalizedTags;
+        hasChanges = true;
+      }
+    }
+
+    if (!hasChanges) {
+      return post;
     }
 
     return this.postRepository.update(post);
@@ -73,11 +93,11 @@ export class PostApiService {
     await this.postRepository.deleteById(id);
   }
 
-  public async getPublishedPosts(filter?: PostFilter, query?: PostQuery): Promise<PostEntity[]> {
+  public async getPublishedPosts(filter?: PostFilter, query?: PostQuery): Promise<PaginationResult<PostEntity>> {
     return this.postRepository.findPublished(filter, query);
   }
 
-  public async getUserPosts(userId: string, query?: PostQuery): Promise<PostEntity[]> {
+  public async getUserPosts(userId: string, query?: PostQuery): Promise<PaginationResult<PostEntity>> {
     return this.postRepository.findByUserId(userId, query);
   }
 
@@ -85,7 +105,7 @@ export class PostApiService {
     return this.postRepository.findDraftsByUserId(userId);
   }
 
-  public async getFeed(userIds: string[], query?: PostQuery): Promise<PostEntity[]> {
+  public async getFeed(userIds: string[], query?: PostQuery): Promise<PaginationResult<PostEntity>> {
     return this.postRepository.findByUserIds(userIds, query);
   }
 
@@ -105,7 +125,7 @@ export class PostApiService {
       throw new ConflictException(REPOST_ALREADY_EXISTS);
     }
 
-    const repostEntity = new PostEntity({
+    const repostEntity = this.postFactory.create({
       type: originalPost.type,
       status: PostStatus.PUBLISHED,
       userId,

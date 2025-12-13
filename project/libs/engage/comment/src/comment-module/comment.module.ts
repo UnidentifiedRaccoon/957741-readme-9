@@ -6,7 +6,6 @@ import { CommentFactory } from './comment.factory';
 @Module({
   imports: [PrismaClientModule],
   providers: [CommentRepository, CommentFactory],
-  exports: [CommentRepository],
+  exports: [CommentRepository, CommentFactory],
 })
 export class CommentModule {}
-

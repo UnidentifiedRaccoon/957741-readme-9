@@ -15,10 +15,10 @@ import { PostApiService } from './post-api.service';
 import { CreatePostDto } from '../dto/create-post.dto';
 import { UpdatePostDto } from '../dto/update-post.dto';
 import { PostQueryDto } from '../dto/post-query.dto';
-import { parsePostQueryDto } from '../dto/post-query.parser';
 import { PostRdo } from '../rdo/post.rdo';
-import { PostApiResponseMessage } from './post-api-response-message.constant';
-import { postToRdo, postsToRdo } from './post-api.mapper';
+import { PostWithPaginationRdo } from '../rdo/post-with-pagination.rdo';
+import { postToRdo, postsToRdo, paginationToRdo } from './post-api.mapper';
+import { PostApiResponseMessage } from './post-api.constant';
 
 @ApiTags('posts')
 @Controller('posts')
@@ -44,16 +44,31 @@ export class PostApiController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: PostApiResponseMessage.PostsFound,
-    type: [PostRdo],
+    type: PostWithPaginationRdo,
   })
   @Post('feed')
   public async getFeed(
     @Body() body: { userIds: string[] },
     @Query() dto: PostQueryDto,
-  ): Promise<PostRdo[]> {
-    const { query } = parsePostQueryDto(dto);
-    const posts = await this.postApiService.getFeed(body.userIds, query);
-    return postsToRdo(posts);
+  ): Promise<PostWithPaginationRdo> {
+    const result = await this.postApiService.getFeed(body.userIds, dto);
+    return paginationToRdo(result);
+  }
+
+  @ApiOperation({ summary: 'Get user posts by user ID' })
+  @ApiParam({ name: 'userId', description: 'User ID' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: PostApiResponseMessage.PostsFound,
+    type: PostWithPaginationRdo,
+  })
+  @Get('user/:userId')
+  public async getUserPosts(
+    @Param('userId') userId: string,
+    @Query() dto: PostQueryDto,
+  ): Promise<PostWithPaginationRdo> {
+    const result = await this.postApiService.getUserPosts(userId, dto);
+    return paginationToRdo(result);
   }
 
   @ApiOperation({ summary: 'Get user drafts' })
@@ -183,12 +198,12 @@ export class PostApiController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: PostApiResponseMessage.PostsFound,
-    type: [PostRdo],
+    type: PostWithPaginationRdo,
   })
   @Get()
-  public async getMany(@Query() dto: PostQueryDto): Promise<PostRdo[]> {
-    const { filter, query } = parsePostQueryDto(dto);
-    const posts = await this.postApiService.getPublishedPosts(filter, query);
-    return postsToRdo(posts);
+  public async getMany(@Query() dto: PostQueryDto): Promise<PostWithPaginationRdo> {
+    const filter = { userId: dto.userId, type: dto.type, tag: dto.tag };
+    const result = await this.postApiService.getPublishedPosts(filter, dto);
+    return paginationToRdo(result);
   }
 }

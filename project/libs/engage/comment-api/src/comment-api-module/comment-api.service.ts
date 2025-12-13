@@ -1,18 +1,23 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { CommentRepository, CommentEntity, CommentQuery } from '@project/engage-comment';
+import { ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { CommentRepository, CommentEntity, CommentQuery, CommentFactory } from '@project/engage-comment';
 import { CreateCommentDto } from '../dto/create-comment.dto';
 import { COMMENT_NOT_FOUND, COMMENT_NOT_OWNER } from './comment-api.constant';
 
 @Injectable()
 export class CommentApiService {
-  constructor(private readonly commentRepository: CommentRepository) {}
+  private readonly logger = new Logger(CommentApiService.name);
+
+  constructor(
+    private readonly commentRepository: CommentRepository,
+    private readonly commentFactory: CommentFactory,
+  ) {}
 
   public async createComment(
     postId: string,
     dto: CreateCommentDto,
     userId: string,
   ): Promise<CommentEntity> {
-    const commentEntity = new CommentEntity({
+    const commentEntity = this.commentFactory.create({
       postId,
       userId,
       text: dto.text,
@@ -47,4 +52,3 @@ export class CommentApiService {
     return this.commentRepository.deleteByPostId(postId);
   }
 }
-

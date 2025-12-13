@@ -1,6 +1,6 @@
 import { ClassTransformOptions, plainToInstance } from 'class-transformer';
 
-type PlainObject = Record<string, unknown>;
+type PlainObject = Record<string, any>;
 
 export function fillDto<T, V extends PlainObject>(
   DtoClass: new () => T,

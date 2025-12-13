@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { LikeRepository } from '@project/engage-like';
 
 @Injectable()
 export class LikeApiService {
+  private readonly logger = new Logger(LikeApiService.name);
+
   constructor(private readonly likeRepository: LikeRepository) {}
 
   public async toggleLike(postId: string, userId: string): Promise<{ liked: boolean }> {
@@ -21,4 +23,3 @@ export class LikeApiService {
     return this.likeRepository.deleteByPostId(postId);
   }
 }
-

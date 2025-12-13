@@ -34,7 +34,7 @@ export class CommentRepository extends BasePostgresRepository<CommentEntity, Com
 
   public override async findById(id: string): Promise<CommentEntity | null> {
     const record = await this.client.comment.findUnique({ where: { id } });
-    return this.createEntityFromDocument(record as Comment);
+    return this.createEntityFromDocument(record);
   }
 
   public override async deleteById(id: string): Promise<void> {
@@ -51,9 +51,7 @@ export class CommentRepository extends BasePostgresRepository<CommentEntity, Com
       orderBy: { createdAt: 'desc' },
     });
 
-    return records
-      .map((record) => this.createEntityFromDocument(record as Comment))
-      .filter((entity): entity is CommentEntity => entity !== null);
+    return records.map(this.createEntityFromDocument)
   }
 
   public async countByPostId(postId: string): Promise<number> {
