@@ -47,7 +47,8 @@ export class AuthenticationController {
     @Post('login')
     public async login(@Body() dto: LoginUserDto): Promise<LoggedUserRdo> {
       const user = await this.authService.login(dto);
-      return loggedUserToRdo(user);
+      const userToken = await this.authService.createUserToken(user);
+      return loggedUserToRdo(user, userToken.accessToken);
     }   
 
     @ApiResponse({

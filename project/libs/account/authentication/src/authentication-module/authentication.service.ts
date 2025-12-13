@@ -70,7 +70,7 @@ export class AuthenticationService {
 
   public async createUserToken(user: User): Promise<Token> {
     const payload: TokenPayload = {
-      sub: user.id,
+      sub: user.id ?? '',
       email: user.email,
       lastname: user.lastname,
       firstname: user.firstname,
