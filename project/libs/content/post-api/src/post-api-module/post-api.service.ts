@@ -1,4 +1,4 @@
-import { ConflictException, ForbiddenException, Injectable } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { PostRepository, PostEntity, PostQuery, PostFilter, PostFactory } from '@project/content-post';
 import { PostStatus, PaginationResult } from '@project/core';
 import { CreatePostDto } from '../dto/create-post.dto';
@@ -11,6 +11,8 @@ function normalizeTags(tags?: string[]): { name: string }[] | undefined {
 
 @Injectable()
 export class PostApiService {
+  private readonly logger = new Logger(PostApiService.name);
+
   constructor(
     private readonly postRepository: PostRepository,
     private readonly postFactory: PostFactory,

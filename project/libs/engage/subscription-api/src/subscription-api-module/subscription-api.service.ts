@@ -1,9 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { SubscriptionRepository } from '@project/engage-subscription';
 import { CANNOT_SUBSCRIBE_SELF } from './subscription-api.constant';
 
 @Injectable()
 export class SubscriptionApiService {
+  private readonly logger = new Logger(SubscriptionApiService.name);
+
   constructor(private readonly subscriptionRepository: SubscriptionRepository) {}
 
   public async subscribe(
@@ -44,4 +46,3 @@ export class SubscriptionApiService {
     return this.subscriptionRepository.isSubscribed(followerId, followingId);
   }
 }
-
