@@ -1,5 +1,5 @@
 {
-  "name": "@project/account-config",
+  "name": "@project/storage-config",
   "version": "0.0.1",
   "private": true,
   "type": "commonjs",

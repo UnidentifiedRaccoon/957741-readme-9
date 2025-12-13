@@ -20,7 +20,6 @@
       "@project/account-config": ["libs/account/config/src/index.ts"],
       "@project/authentication": ["libs/account/authentication/src/index.ts"],
       "@project/blog-user": ["libs/account/blog-user/src/index.ts"],
-      "@project/config": ["libs/account/config/src/index.ts"],
       "@project/content-config": ["libs/content/config/src/index.ts"],
       "@project/content-models": ["libs/content/models/src/index.ts"],
       "@project/content-post": ["libs/content/post/src/index.ts"],
@@ -39,7 +38,8 @@
         "libs/engage/subscription-api/src/index.ts"
       ],
       "@project/helpers": ["libs/shared/helpers/src/index.ts"],
-      "@project/pipes": ["libs/shared/pipes/src/index.ts"]
+      "@project/pipes": ["libs/shared/pipes/src/index.ts"],
+      "@project/storage-config": ["libs/storage/config/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
