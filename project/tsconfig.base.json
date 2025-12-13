@@ -39,6 +39,7 @@
         "libs/engage/subscription-api/src/index.ts"
       ],
       "@project/file-uploader": ["libs/storage/file-uploader/src/index.ts"],
+      "@project/file-uploader-api": ["libs/storage/file-uploader-api/src/index.ts"],
       "@project/helpers": ["libs/shared/helpers/src/index.ts"],
       "@project/pipes": ["libs/shared/pipes/src/index.ts"],
       "@project/storage-config": ["libs/storage/config/src/index.ts"]
