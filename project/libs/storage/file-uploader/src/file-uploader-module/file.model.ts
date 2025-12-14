@@ -1,4 +1,4 @@
-import { Document } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 import { File } from '@project/core';
@@ -9,7 +9,7 @@ import { File } from '@project/core';
   toJSON: { virtuals: true },
   toObject: { virtuals: true },
 })
-export class FileModel extends Document implements File {
+export class FileModel implements File {
   @Prop({
     required: true,
   })
@@ -52,3 +52,5 @@ export const FileSchema = SchemaFactory.createForClass(FileModel);
 FileSchema.virtual('id').get(function () {
   return this._id.toString();
 });
+
+export type FileDocument = HydratedDocument<FileModel>;

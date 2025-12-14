@@ -12,10 +12,13 @@ export class CreatePostDto {
   public type: PostType;
 
   @ApiPropertyOptional({
-    description: 'Post title (required for VIDEO and TEXT types)',
+    description: 'Post title (required for VIDEO and TEXT types). Min 20, max 50 characters.',
     example: 'My awesome blog post title',
+    minLength: 20,
+    maxLength: 50,
   })
   @IsString()
+  @Length(20, 50, { message: 'Title must be between 20 and 50 characters' })
   @IsOptional()
   public title?: string;
 

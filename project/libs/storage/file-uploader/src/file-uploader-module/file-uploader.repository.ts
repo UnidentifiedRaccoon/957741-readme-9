@@ -6,13 +6,13 @@ import { BaseMongoRepository } from '@project/data-access';
 
 import { FileUploaderEntity } from './file-uploader.entity';
 import { FileUploaderFactory } from './file-uploader.factory';
-import { FileModel } from './file.model';
+import { FileModel, FileDocument } from './file.model';
 
 @Injectable()
-export class FileUploaderRepository extends BaseMongoRepository<FileUploaderEntity, FileModel> {
+export class FileUploaderRepository extends BaseMongoRepository<FileUploaderEntity, FileDocument> {
   constructor(
     entityFactory: FileUploaderFactory,
-    @InjectModel(FileModel.name) fileModel: Model<FileModel>,
+    @InjectModel(FileModel.name) fileModel: Model<FileDocument>,
   ) {
     super(entityFactory, fileModel);
   }
