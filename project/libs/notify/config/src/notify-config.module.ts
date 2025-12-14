@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import applicationConfig from './configurations/app.config';
 import mongoConfig from './configurations/mongodb/mongo.config';
 import rabbitConfig from './configurations/rabbit.config';
+import mailConfig from './configurations/mail.config';
 
 const ENV_NOTIFY_FILE_PATH = 'apps/notify-service/notify-service.env';
 
@@ -12,7 +13,7 @@ const ENV_NOTIFY_FILE_PATH = 'apps/notify-service/notify-service.env';
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      load: [applicationConfig, mongoConfig, rabbitConfig],
+      load: [applicationConfig, mongoConfig, rabbitConfig, mailConfig],
       envFilePath: ENV_NOTIFY_FILE_PATH,
     }),
   ],
