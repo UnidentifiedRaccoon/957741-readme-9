@@ -4,10 +4,13 @@ import { PostStatus } from '@project/core';
 
 export class UpdatePostDto {
   @ApiPropertyOptional({
-    description: 'Post title',
-    example: 'Updated post title',
+    description: 'Post title. Min 20, max 50 characters.',
+    example: 'Updated post title here now',
+    minLength: 20,
+    maxLength: 50,
   })
   @IsString()
+  @Length(20, 50, { message: 'Title must be between 20 and 50 characters' })
   @IsOptional()
   public title?: string;
 

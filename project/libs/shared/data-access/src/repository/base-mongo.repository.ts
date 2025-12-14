@@ -20,8 +20,13 @@ export abstract class BaseMongoRepository<
       return null;
     }
 
-    const plainObject = document.toObject({ versionKey: false }) as ReturnType<T['toPOJO']>;
-    return this.entityFactory.create(plainObject);
+    const plainObject = document.toObject({ versionKey: false });
+    // Map MongoDB _id to entity id
+    const entityData = {
+      ...plainObject,
+      id: plainObject._id?.toString(),
+    } as ReturnType<T['toPOJO']>;
+    return this.entityFactory.create(entityData);
   }
 
   public async findById(id: T['id']): Promise<T | null> {

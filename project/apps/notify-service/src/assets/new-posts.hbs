@@ -1,0 +1,20 @@
+<h2>Привет, {{user}}!</h2>
+
+<p>У нас есть новые публикации для вас:</p>
+
+{{#if posts.length}}
+<ul>
+  {{#each posts}}
+  <li>
+    <strong>{{this.title}}</strong>
+    <br/>
+    <small>Опубликовано: {{this.publishedAt}}</small>
+  </li>
+  {{/each}}
+</ul>
+{{else}}
+<p>На данный момент новых публикаций нет.</p>
+{{/if}}
+
+<p>С уважением,<br/>Команда Readme</p>
+

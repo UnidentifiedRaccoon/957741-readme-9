@@ -174,7 +174,7 @@ npx nx g @nx/nest:service apps/content-service/src/app/foo
 
 Генерация библиотеки
 ```bash
-npx nx generate @nx/node:library libs/shared/core 
+npx nx generate @nx/node:library libs/storage/config --name=storage-config
 ```
 
 ## Запуск docker-compose

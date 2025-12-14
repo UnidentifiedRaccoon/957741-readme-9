@@ -1,0 +1,8 @@
+{
+  "name": "file-uploader-api",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/storage/file-uploader-api/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {}
+}

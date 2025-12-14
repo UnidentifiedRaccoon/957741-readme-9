@@ -12,10 +12,13 @@ export class CreatePostDto {
   public type: PostType;
 
   @ApiPropertyOptional({
-    description: 'Post title (required for VIDEO and TEXT types)',
+    description: 'Post title (required for VIDEO and TEXT types). Min 20, max 50 characters.',
     example: 'My awesome blog post title',
+    minLength: 20,
+    maxLength: 50,
   })
   @IsString()
+  @Length(20, 50, { message: 'Title must be between 20 and 50 characters' })
   @IsOptional()
   public title?: string;
 
@@ -34,8 +37,8 @@ export class CreatePostDto {
   })
   @IsArray()
   @IsString({ each: true })
-  @ArrayMaxSize(8)
-  @Length(3, 10, { each: true })
+  @ArrayMaxSize(8, { message: 'tags must contain no more than 8 elements' })
+  @Length(3, 10, { each: true, message: 'each tag must be between 3 and 10 characters' })
   @IsOptional()
   public tags?: string[];
 }
