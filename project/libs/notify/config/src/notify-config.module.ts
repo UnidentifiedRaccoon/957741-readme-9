@@ -5,6 +5,7 @@ import applicationConfig from './configurations/app.config';
 import mongoConfig from './configurations/mongodb/mongo.config';
 import rabbitConfig from './configurations/rabbit.config';
 import mailConfig from './configurations/mail.config';
+import contentServiceConfig from './configurations/content-service.config';
 
 const ENV_NOTIFY_FILE_PATH = 'apps/notify-service/notify-service.env';
 
@@ -13,7 +14,7 @@ const ENV_NOTIFY_FILE_PATH = 'apps/notify-service/notify-service.env';
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      load: [applicationConfig, mongoConfig, rabbitConfig, mailConfig],
+      load: [applicationConfig, mongoConfig, rabbitConfig, mailConfig, contentServiceConfig],
       envFilePath: ENV_NOTIFY_FILE_PATH,
     }),
   ],

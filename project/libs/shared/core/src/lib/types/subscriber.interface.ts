@@ -3,4 +3,5 @@ export interface Subscriber {
     email: string;
     firstname: string;
     lastname: string;
+    lastSentAt?: Date;
 }

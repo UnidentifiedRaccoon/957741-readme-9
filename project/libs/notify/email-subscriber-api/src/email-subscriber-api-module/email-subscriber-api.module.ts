@@ -17,4 +17,3 @@ import { MailModule } from '@project/mail';
   exports: [EmailSubscriberApiService],
 })
 export class EmailSubscriberApiModule {}
-

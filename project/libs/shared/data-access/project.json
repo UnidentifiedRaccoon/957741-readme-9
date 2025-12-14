@@ -5,5 +5,17 @@
   "projectType": "library",
   "tags": [],
   "// targets": "to see all targets run: nx show project data-access --web",
-  "targets": {}
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/shared/data-access",
+        "tsConfig": "libs/shared/data-access/tsconfig.lib.json",
+        "packageJson": "libs/shared/data-access/package.json",
+        "main": "libs/shared/data-access/src/index.ts",
+        "assets": ["libs/shared/data-access/*.md"]
+      }
+    }
+  }
 }

@@ -15,6 +15,9 @@ export class EmailSubscriberModel implements Subscriber {
 
   @Prop({ required: true })
   public lastname: string;
+
+  @Prop()
+  public lastSentAt?: Date;
 }
 
 export const EmailSubscriberSchema = SchemaFactory.createForClass(EmailSubscriberModel);

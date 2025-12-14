@@ -4,6 +4,7 @@ export class EmailSubscriberEntity extends Entity implements StorableEntity<Subs
   public email: string;
   public firstname: string;
   public lastname: string;
+  public lastSentAt?: Date;
 
   constructor(subscriber?: Subscriber) {
     super();
@@ -19,6 +20,7 @@ export class EmailSubscriberEntity extends Entity implements StorableEntity<Subs
     this.email = subscriber.email;
     this.firstname = subscriber.firstname;
     this.lastname = subscriber.lastname;
+    this.lastSentAt = subscriber.lastSentAt;
   }
 
   public toPOJO(): Subscriber {
@@ -27,6 +29,7 @@ export class EmailSubscriberEntity extends Entity implements StorableEntity<Subs
       email: this.email,
       firstname: this.firstname,
       lastname: this.lastname,
+      lastSentAt: this.lastSentAt,
     };
   }
 }
