@@ -4,12 +4,14 @@ import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
 import { RabbitRouting } from '@project/core';
 import { EmailSubscriberApiService } from './email-subscriber-api.service';
 import { CreateSubscriberDto } from '../dto/create-subscriber.dto';
+import { MailService } from '@project/mail';
 
 
 @Controller()
 export class EmailSubscriberApiController {
   constructor(
     private readonly subscriberService: EmailSubscriberApiService,
+    private readonly mailService: MailService,
   ) {}
 
   @RabbitSubscribe({
@@ -19,5 +21,6 @@ export class EmailSubscriberApiController {
   })
   public async create(subscriber: CreateSubscriberDto) {
     this.subscriberService.addSubscriber(subscriber);
+    this.mailService.sendNotifyNewSubscriber(subscriber);
   }
 }

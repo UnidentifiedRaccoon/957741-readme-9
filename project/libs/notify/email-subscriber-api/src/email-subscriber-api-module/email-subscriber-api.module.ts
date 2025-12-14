@@ -4,9 +4,11 @@ import { EmailSubscriberModule } from '@project/email-subscriber';
 import { EmailSubscriberApiController } from './email-subscriber-api.controller';
 import { EmailSubscriberApiService } from './email-subscriber-api.service';
 import { getRabbitMQOptions } from '@project/helpers';
+import { MailModule } from '@project/mail';
 
 @Module({
   imports: [
+    MailModule,
     EmailSubscriberModule,
     RabbitMQModule.forRootAsync(getRabbitMQOptions('rabbit')),
   ],
