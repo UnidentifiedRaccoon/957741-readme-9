@@ -10,6 +10,7 @@ import { AuthenticationController } from './authentication.controller';
 import { AuthenticationService } from './authentication.service';
 
 import { JwtAccessStrategy } from '../strategies/jwt-access.strategy';
+import { NotifyModule } from '@project/account-notify';
 
 @Module({
   controllers: [AuthenticationController],
@@ -17,7 +18,9 @@ import { JwtAccessStrategy } from '../strategies/jwt-access.strategy';
   imports: [BlogUserModule, JwtModule.registerAsync({
     inject: [ConfigService],
     useFactory: getJwtOptions,
-  })],
+  }),
+  NotifyModule,
+],
   exports: [],
 })
 export class AuthenticationModule {}
