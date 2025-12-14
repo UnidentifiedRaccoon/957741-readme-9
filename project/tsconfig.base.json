@@ -31,6 +31,9 @@
       "@project/email-subscriber": [
         "libs/notify/email-subscriber/src/index.ts"
       ],
+      "@project/email-subscriber-api": [
+        "libs/notify/email-subscriber-api/src/index.ts"
+      ],
       "@project/engage-comment": ["libs/engage/comment/src/index.ts"],
       "@project/engage-comment-api": ["libs/engage/comment-api/src/index.ts"],
       "@project/engage-config": ["libs/engage/config/src/index.ts"],
