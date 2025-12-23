@@ -11,10 +11,11 @@ import { AuthenticationService } from './authentication.service';
 
 import { JwtAccessStrategy } from '../strategies/jwt-access.strategy';
 import { NotifyModule } from '@project/account-notify';
+import { LocalStrategy } from '../strategies/local.strategy';
 
 @Module({
   controllers: [AuthenticationController],
-  providers: [AuthenticationService, JwtAccessStrategy],
+  providers: [AuthenticationService, JwtAccessStrategy, LocalStrategy],
   imports: [BlogUserModule, JwtModule.registerAsync({
     inject: [ConfigService],
     useFactory: getJwtOptions,
