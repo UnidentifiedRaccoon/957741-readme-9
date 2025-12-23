@@ -20,11 +20,11 @@ export abstract class BaseMongoRepository<
       return null;
     }
 
-    const plainObject = document.toObject({ versionKey: false });
+    const plainObject = document.toObject({ getters: true, versionKey: false, flattenObjectIds: true });
     // Map MongoDB _id to entity id
     const entityData = {
       ...plainObject,
-      id: plainObject._id?.toString(),
+      id: plainObject._id,
     } as ReturnType<T['toPOJO']>;
     return this.entityFactory.create(entityData);
   }
