@@ -1,20 +1,30 @@
+# =============================================
+# Engage Service - Likes API (port 3003)
+# =============================================
+
+@baseUrl = http://localhost:3003/api/likes
+@postId = 550e8400-e29b-41d4-a716-446655440000
+@userId = 658170cbb954e9f5b905ccf4
+
+###
+
 # Toggle like on a post
-POST http://localhost:3002/api/likes/post-uuid-here?userId=user-uuid-here HTTP/1.1
+POST {{baseUrl}}/{{postId}}?userId={{userId}} HTTP/1.1
 
 ###
 
 # Get likes count for a post
-GET http://localhost:3002/api/likes/post-uuid-here/count HTTP/1.1
+GET {{baseUrl}}/{{postId}}/count HTTP/1.1
 
 ###
 
 # Check if user liked a post
-GET http://localhost:3002/api/likes/post-uuid-here/check?userId=user-uuid-here HTTP/1.1
+GET {{baseUrl}}/{{postId}}/check?userId={{userId}} HTTP/1.1
 
 ###
 
 # Delete all likes for a post (internal use)
-DELETE http://localhost:3002/api/likes/post-uuid-here HTTP/1.1
+DELETE {{baseUrl}}/{{postId}} HTTP/1.1
 
 ###
 

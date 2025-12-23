@@ -1,5 +1,32 @@
-# Login user by email and password
-POST http://localhost:4000/api/users/login HTTP/1.1
+# =============================================
+# API Gateway - Full Testing Suite (port 4000)
+# =============================================
+# Entry point for all frontend requests
+# Swagger documentation: http://localhost:4000/spec
+# =============================================
+
+@baseUrl = http://localhost:4000/api
+@token = YOUR_JWT_TOKEN_HERE
+
+# =============================================
+# USERS API
+# =============================================
+
+### Register a new user
+POST {{baseUrl}}/users/register HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com",
+  "firstname": "Test",
+  "lastname": "User",
+  "password": "test123"
+}
+
+###
+
+### Login user (user@notfound.local - seeded user)
+POST {{baseUrl}}/users/login HTTP/1.1
 Content-Type: application/json
 
 {
@@ -9,22 +36,415 @@ Content-Type: application/json
 
 ###
 
-# Get new JWT pair
-POST http://localhost:4000/api/users/refresh HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIiLCJlbWFpbCI6InVzZXJAbm90Zm91bmQubG9jYWwiLCJyb2xlIjoidXNlciIsImxhc3RuYW1lIjoiU21pdGgiLCJmaXJzdG5hbWUiOiJLZWtzIiwidG9rZW5JZCI6IjBiMzk0NDA1LWM0ZTQtNGRmMy04NGNjLTg4ZTI5YTRiOGJkZiIsImlhdCI6MTcxNDY2NDEwOSwiZXhwIjoxNzE3MjU2MTA5fQ.A_-yL6zgW1H6VJbfMzXpQvJnK5flYjpwYOZiCxybnio
-
-###
-
-# Create a new post
-POST http://localhost:4000/api/blog HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NDQwMzJmYmU0Y2FlYjg2OGM2ZWVjMzYiLCJlbWFpbCI6InVzZXJAbm90Zm91bmQubG9jYWwiLCJyb2xlIjoidXNlciIsImxhc3RuYW1lIjoiU21pdGgiLCJmaXJzdG5hbWUiOiJLZWtzIiwiaWF0IjoxNjgzMTI0MTA5LCJleHAiOjE2ODMxMjQ3MDl9.oHiIvy7hGEuDaI7e7Jspbcd68_5CMKNe2qzkMV6bDe8
+### Login user (alice@example.com - seeded user)
+POST {{baseUrl}}/users/login HTTP/1.1
 Content-Type: application/json
 
 {
-  "title": "Проверка!!",
-  "description": "Текст анонса",
-  "content": "Расширенный текст публикации",
-  "categories": [""]
+  "email": "alice@example.com",
+  "password": "qwerty"
 }
+
 ###
 
+### Refresh token
+POST {{baseUrl}}/users/refresh HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+
+### Get user by ID (with stats: posts count, followers count)
+GET {{baseUrl}}/users/658170cbb954e9f5b905ccf4 HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+
+### Change password
+PATCH {{baseUrl}}/users/password HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "currentPassword": "123456",
+  "newPassword": "newpass123"
+}
+
+###
+
+# =============================================
+# ERROR CASES - USERS
+# =============================================
+
+### Login with wrong password (should fail with 401)
+POST {{baseUrl}}/users/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "user@notfound.local",
+  "password": "wrongpassword"
+}
+
+###
+
+### Login with non-existing email (should fail with 404)
+POST {{baseUrl}}/users/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "nonexistent@example.com",
+  "password": "123456"
+}
+
+###
+
+### Register with existing email (should fail with 409)
+POST {{baseUrl}}/users/register HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "user@notfound.local",
+  "firstname": "Test",
+  "lastname": "User",
+  "password": "test123"
+}
+
+###
+
+# =============================================
+# BLOG/POSTS API
+# =============================================
+
+### Get all published posts
+GET {{baseUrl}}/blog HTTP/1.1
+
+###
+
+### Get posts with pagination
+GET {{baseUrl}}/blog?page=1&limit=10 HTTP/1.1
+
+###
+
+### Get posts filtered by type
+GET {{baseUrl}}/blog?type=TEXT HTTP/1.1
+
+###
+
+### Get posts filtered by tag
+GET {{baseUrl}}/blog?tag=javascript HTTP/1.1
+
+###
+
+### Get posts sorted by likes
+GET {{baseUrl}}/blog?sortBy=likesCount HTTP/1.1
+
+###
+
+### Search posts by title
+GET {{baseUrl}}/blog/search/coding HTTP/1.1
+
+###
+
+### Search posts with limit
+GET {{baseUrl}}/blog/search/blog?limit=5 HTTP/1.1
+
+###
+
+### Create a new TEXT post
+POST {{baseUrl}}/blog HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "type": "TEXT",
+  "title": "My first blog post about coding",
+  "extraFields": {
+    "announcement": "This is a short preview of my post about coding that will appear in the list",
+    "text": "This is the full content of my blog post. It contains detailed information about coding practices and techniques that I want to share with my readers. The content must be at least 100 characters long."
+  },
+  "tags": ["coding", "javascript", "nodejs"]
+}
+
+###
+
+### Create a new VIDEO post
+POST {{baseUrl}}/blog HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "type": "VIDEO",
+  "title": "Amazing JavaScript Tutorial Video",
+  "extraFields": {
+    "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  },
+  "tags": ["video", "tutorial"]
+}
+
+###
+
+### Create a new QUOTE post
+POST {{baseUrl}}/blog HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "type": "QUOTE",
+  "extraFields": {
+    "quoteText": "The only way to do great work is to love what you do.",
+    "quoteAuthor": "Steve Jobs"
+  },
+  "tags": ["inspiration", "quotes"]
+}
+
+###
+
+### Create a new LINK post
+POST {{baseUrl}}/blog HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "type": "LINK",
+  "extraFields": {
+    "linkUrl": "https://nestjs.com",
+    "linkDescription": "NestJS - A progressive Node.js framework"
+  },
+  "tags": ["nestjs", "framework"]
+}
+
+###
+
+### Get post by ID (with likes and comments count)
+# Replace POST_ID with actual post ID
+GET {{baseUrl}}/blog/POST_ID HTTP/1.1
+
+###
+
+### Update a post
+# Replace POST_ID with actual post ID
+PATCH {{baseUrl}}/blog/POST_ID HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Updated blog post title here",
+  "tags": ["updated", "tags"]
+}
+
+###
+
+### Delete a post
+# Replace POST_ID with actual post ID
+DELETE {{baseUrl}}/blog/POST_ID HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+
+### Get user drafts
+GET {{baseUrl}}/blog/drafts HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+
+### Get user feed (posts from subscriptions)
+GET {{baseUrl}}/blog/feed HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+
+### Create a repost
+# Replace POST_ID with actual post ID
+POST {{baseUrl}}/blog/POST_ID/repost HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+
+# =============================================
+# LIKES API
+# =============================================
+
+### Toggle like on a post
+# Replace POST_ID with actual post ID
+POST {{baseUrl}}/likes/POST_ID HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+
+### Get likes count for a post
+# Replace POST_ID with actual post ID
+GET {{baseUrl}}/likes/POST_ID/count HTTP/1.1
+
+###
+
+### Check if current user liked a post
+# Replace POST_ID with actual post ID
+GET {{baseUrl}}/likes/POST_ID/check HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+
+# =============================================
+# COMMENTS API
+# =============================================
+
+### Get comments for a post
+# Replace POST_ID with actual post ID
+GET {{baseUrl}}/comments/POST_ID HTTP/1.1
+
+###
+
+### Get comments with pagination
+# Replace POST_ID with actual post ID
+GET {{baseUrl}}/comments/POST_ID?page=1&limit=10 HTTP/1.1
+
+###
+
+### Create a comment
+# Replace POST_ID with actual post ID
+POST {{baseUrl}}/comments/POST_ID HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "text": "This is a great post! Thank you for sharing this content."
+}
+
+###
+
+### Get comments count for a post
+# Replace POST_ID with actual post ID
+GET {{baseUrl}}/comments/POST_ID/count HTTP/1.1
+
+###
+
+### Delete a comment
+# Replace COMMENT_ID with actual comment ID
+DELETE {{baseUrl}}/comments/COMMENT_ID HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+
+# =============================================
+# SUBSCRIPTIONS API
+# =============================================
+
+### Subscribe to a user
+# Replace USER_ID with actual user ID to follow
+POST {{baseUrl}}/subscriptions/USER_ID HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+
+### Unsubscribe from a user
+# Replace USER_ID with actual user ID to unfollow
+DELETE {{baseUrl}}/subscriptions/USER_ID HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+
+### Get list of users that current user follows
+GET {{baseUrl}}/subscriptions/following HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+
+### Get list of followers for current user
+GET {{baseUrl}}/subscriptions/followers HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+
+### Get followers count for a user
+# Replace USER_ID with actual user ID
+GET {{baseUrl}}/subscriptions/USER_ID/followers/count HTTP/1.1
+
+###
+
+### Check if subscribed to a user
+# Replace USER_ID with actual user ID
+GET {{baseUrl}}/subscriptions/USER_ID/check HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+
+# =============================================
+# FILES API
+# =============================================
+
+### Upload a file
+POST {{baseUrl}}/files/upload HTTP/1.1
+Content-Type: multipart/form-data; boundary=boundary
+Authorization: Bearer {{token}}
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="test.txt"
+Content-Type: text/plain
+
+This is a test file content.
+--boundary--
+
+###
+
+### Get file by ID
+# Replace FILE_ID with actual file ID
+GET {{baseUrl}}/files/FILE_ID HTTP/1.1
+
+###
+
+# =============================================
+# NOTIFICATIONS API
+# =============================================
+
+### Send notifications about new posts to all subscribers
+POST {{baseUrl}}/notify/send HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+
+# =============================================
+# VALIDATION ERROR CASES
+# =============================================
+
+### Create post with short title (should fail with 400)
+POST {{baseUrl}}/blog HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "type": "TEXT",
+  "title": "Short title",
+  "extraFields": {
+    "announcement": "This is a short preview",
+    "text": "This is the content"
+  }
+}
+
+###
+
+### Create comment with short text (should fail with 400)
+POST {{baseUrl}}/comments/POST_ID HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "text": "Short"
+}
+
+###
+
+### Create post with too many tags (should fail with 400)
+POST {{baseUrl}}/blog HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "type": "TEXT",
+  "title": "Post with too many tags here",
+  "extraFields": {
+    "announcement": "This is a short preview of my post",
+    "text": "This is the full content of my blog post"
+  },
+  "tags": ["tag1", "tag2", "tag3", "tag4", "tag5", "tag6", "tag7", "tag8", "tag9"]
+}
+
+###

@@ -1,35 +1,45 @@
+# =============================================
+# Engage Service - Subscriptions API (port 3003)
+# =============================================
+
+@baseUrl = http://localhost:3003/api/subscriptions
+@followerId = 658170cbb954e9f5b905ccf4
+@followingId = 6581762309c030b503e30512
+
+###
+
 # Subscribe to a user
-POST http://localhost:3002/api/subscriptions/following-user-uuid?followerId=follower-user-uuid HTTP/1.1
+POST {{baseUrl}}/{{followingId}}?followerId={{followerId}} HTTP/1.1
 
 ###
 
 # Unsubscribe from a user
-DELETE http://localhost:3002/api/subscriptions/following-user-uuid?followerId=follower-user-uuid HTTP/1.1
+DELETE {{baseUrl}}/{{followingId}}?followerId={{followerId}} HTTP/1.1
 
 ###
 
 # Get list of users that current user follows
-GET http://localhost:3002/api/subscriptions/user-uuid-here/following HTTP/1.1
+GET {{baseUrl}}/{{followerId}}/following HTTP/1.1
 
 ###
 
 # Get list of followers
-GET http://localhost:3002/api/subscriptions/user-uuid-here/followers HTTP/1.1
+GET {{baseUrl}}/{{followingId}}/followers HTTP/1.1
 
 ###
 
 # Get followers count
-GET http://localhost:3002/api/subscriptions/user-uuid-here/followers/count HTTP/1.1
+GET {{baseUrl}}/{{followingId}}/followers/count HTTP/1.1
 
 ###
 
 # Get following count
-GET http://localhost:3002/api/subscriptions/user-uuid-here/following/count HTTP/1.1
+GET {{baseUrl}}/{{followerId}}/following/count HTTP/1.1
 
 ###
 
 # Check if subscribed
-GET http://localhost:3002/api/subscriptions/check?followerId=follower-uuid&followingId=following-uuid HTTP/1.1
+GET {{baseUrl}}/check?followerId={{followerId}}&followingId={{followingId}} HTTP/1.1
 
 ###
 

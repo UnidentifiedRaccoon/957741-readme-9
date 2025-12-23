@@ -1,13 +1,22 @@
+# =============================================
+# Content Service API (port 3002)
+# =============================================
+
+@baseUrl = http://localhost:3002/api/posts
+@userId = 658170cbb954e9f5b905ccf4
+
+###
+
 # Create a new post (TEXT type)
-POST http://localhost:3000/api/posts?userId=test-user-id HTTP/1.1
+POST {{baseUrl}}?userId={{userId}} HTTP/1.1
 Content-Type: application/json
 
 {
   "type": "TEXT",
   "title": "My first blog post about coding",
   "extraFields": {
-    "announcement": "This is a short preview of my post about coding",
-    "text": "This is the full content of my blog post. It contains detailed information about coding practices and techniques that I want to share with my readers."
+    "announcement": "This is a short preview of my post about coding that will appear in the list",
+    "text": "This is the full content of my blog post. It contains detailed information about coding practices and techniques that I want to share with my readers. The content must be at least 100 characters long."
   },
   "tags": ["coding", "javascript", "nodejs"]
 }
@@ -15,7 +24,7 @@ Content-Type: application/json
 ###
 
 # Create a new post (VIDEO type)
-POST http://localhost:3000/api/posts?userId=test-user-id HTTP/1.1
+POST {{baseUrl}}?userId={{userId}} HTTP/1.1
 Content-Type: application/json
 
 {
@@ -30,7 +39,7 @@ Content-Type: application/json
 ###
 
 # Create a new post (QUOTE type)
-POST http://localhost:3000/api/posts?userId=test-user-id HTTP/1.1
+POST {{baseUrl}}?userId={{userId}} HTTP/1.1
 Content-Type: application/json
 
 {
@@ -45,7 +54,7 @@ Content-Type: application/json
 ###
 
 # Create a new post (LINK type)
-POST http://localhost:3000/api/posts?userId=test-user-id HTTP/1.1
+POST {{baseUrl}}?userId={{userId}} HTTP/1.1
 Content-Type: application/json
 
 {
@@ -60,32 +69,32 @@ Content-Type: application/json
 ###
 
 # Get all published posts
-GET http://localhost:3000/api/posts HTTP/1.1
+GET {{baseUrl}} HTTP/1.1
 
 ###
 
 # Get posts with pagination
-GET http://localhost:3000/api/posts?limit=10&page=1 HTTP/1.1
+GET {{baseUrl}}?limit=10&page=1 HTTP/1.1
 
 ###
 
 # Get posts by type
-GET http://localhost:3000/api/posts?type=TEXT HTTP/1.1
+GET {{baseUrl}}?type=TEXT HTTP/1.1
 
 ###
 
 # Get posts by tag
-GET http://localhost:3000/api/posts?tag=javascript HTTP/1.1
+GET {{baseUrl}}?tag=javascript HTTP/1.1
 
 ###
 
 # Get post by ID (replace with actual ID)
-GET http://localhost:3000/api/posts/550e8400-e29b-41d4-a716-446655440000 HTTP/1.1
+GET {{baseUrl}}/550e8400-e29b-41d4-a716-446655440000 HTTP/1.1
 
 ###
 
 # Update post (replace with actual ID)
-PATCH http://localhost:3000/api/posts/550e8400-e29b-41d4-a716-446655440000?userId=test-user-id HTTP/1.1
+PATCH {{baseUrl}}/550e8400-e29b-41d4-a716-446655440000?userId={{userId}} HTTP/1.1
 Content-Type: application/json
 
 {
@@ -96,42 +105,42 @@ Content-Type: application/json
 ###
 
 # Delete post (replace with actual ID)
-DELETE http://localhost:3000/api/posts/550e8400-e29b-41d4-a716-446655440000?userId=test-user-id HTTP/1.1
+DELETE {{baseUrl}}/550e8400-e29b-41d4-a716-446655440000?userId={{userId}} HTTP/1.1
 
 ###
 
 # Get user drafts
-GET http://localhost:3000/api/posts/drafts/test-user-id HTTP/1.1
+GET {{baseUrl}}/drafts/{{userId}} HTTP/1.1
 
 ###
 
 # Search posts by title
-GET http://localhost:3000/api/posts/search/coding HTTP/1.1
+GET {{baseUrl}}/search/coding HTTP/1.1
 
 ###
 
 # Search posts with limit
-GET http://localhost:3000/api/posts/search/blog?limit=5 HTTP/1.1
+GET {{baseUrl}}/search/blog?limit=5 HTTP/1.1
 
 ###
 
 # Create repost (replace with actual post ID)
-POST http://localhost:3000/api/posts/550e8400-e29b-41d4-a716-446655440000/repost?userId=another-user-id HTTP/1.1
+POST {{baseUrl}}/550e8400-e29b-41d4-a716-446655440000/repost?userId=6581762309c030b503e30512 HTTP/1.1
 
 ###
 
 # Get feed posts
-POST http://localhost:3000/api/posts/feed HTTP/1.1
+POST {{baseUrl}}/feed HTTP/1.1
 Content-Type: application/json
 
 {
-  "userIds": ["user-id-1", "user-id-2", "user-id-3"]
+  "userIds": ["658170cbb954e9f5b905ccf4", "6581762309c030b503e30512", "6581762309c030b503e30513"]
 }
 
 ###
 
 # Get user posts count
-GET http://localhost:3000/api/posts/count/test-user-id HTTP/1.1
+GET {{baseUrl}}/count/{{userId}} HTTP/1.1
 
 ###
 
