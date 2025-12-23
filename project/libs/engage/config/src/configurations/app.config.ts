@@ -1,7 +1,7 @@
 import { registerAs } from '@nestjs/config';
 import * as Joi from 'joi';
 
-const DEFAULT_PORT = 3002;
+const DEFAULT_PORT = 3003;
 const ENVIRONMENTS = ['development', 'production', 'stage'] as const;
 
 type Environment = typeof ENVIRONMENTS[number];
