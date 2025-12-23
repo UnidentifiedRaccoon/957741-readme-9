@@ -1,5 +1,16 @@
+# =============================================
+# Engage Service - Comments API (port 3003)
+# =============================================
+
+@baseUrl = http://localhost:3003/api/comments
+@postId = 550e8400-e29b-41d4-a716-446655440000
+@userId = 658170cbb954e9f5b905ccf4
+@commentId = comment-uuid-here
+
+###
+
 # Create a comment
-POST http://localhost:3002/api/comments/post-uuid-here?userId=user-uuid-here HTTP/1.1
+POST {{baseUrl}}/{{postId}}?userId={{userId}} HTTP/1.1
 Content-Type: application/json
 
 {
@@ -9,27 +20,27 @@ Content-Type: application/json
 ###
 
 # Get comments for a post
-GET http://localhost:3002/api/comments/post-uuid-here HTTP/1.1
+GET {{baseUrl}}/{{postId}} HTTP/1.1
 
 ###
 
 # Get comments with pagination
-GET http://localhost:3002/api/comments/post-uuid-here?limit=10&page=1 HTTP/1.1
+GET {{baseUrl}}/{{postId}}?limit=10&page=1 HTTP/1.1
 
 ###
 
 # Get comments count for a post
-GET http://localhost:3002/api/comments/post-uuid-here/count HTTP/1.1
+GET {{baseUrl}}/{{postId}}/count HTTP/1.1
 
 ###
 
 # Delete a comment
-DELETE http://localhost:3002/api/comments/comment-uuid-here?userId=user-uuid-here HTTP/1.1
+DELETE {{baseUrl}}/{{commentId}}?userId={{userId}} HTTP/1.1
 
 ###
 
 # Delete all comments for a post (internal use)
-DELETE http://localhost:3002/api/comments/post/post-uuid-here HTTP/1.1
+DELETE {{baseUrl}}/post/{{postId}} HTTP/1.1
 
 ###
 

@@ -3,180 +3,226 @@
 ## 🎯 Общая информация
 
 **Проект:** Readme - Headless движок для блога (микросервисная архитектура)  
-**Дата тестирования:** 14 декабря 2025  
-**Ветка:** Модуль 6 (Email рассылки, RabbitMQ, Storage)  
-**Статус:** ✅ Все тесты пройдены
+**Дата тестирования:** 23 декабря 2025  
+**Ветка:** module7-task1 (API Gateway)  
+**Статус:** ✅ Анализ и рефакторинг API Gateway завершён
 
-
+---
 
 ## 🏗️ Архитектура проекта
 
 | Сервис | Порт | База данных | Описание |
 |--------|------|-------------|----------|
-| **account-service** | 3000 | MongoDB:27017 | Аутентификация, пользователи |
-| **content-service** | 3001 | PostgreSQL:5432 | Публикации, теги |
-| **engage-service** | 3002 | PostgreSQL:5433 | Лайки, комментарии, подписки |
-| **storage-service** | 3003 | MongoDB:27018 | Загрузка файлов |
+| **api-gateway** | 4000 | - | Точка входа для фронтенда |
+| **account-service** | 3001 | MongoDB:27017 | Аутентификация, пользователи |
+| **content-service** | 3002 | PostgreSQL:5432 | Публикации, теги |
+| **engage-service** | 3003 | PostgreSQL:5433 | Лайки, комментарии, подписки |
 | **notify-service** | 3004 | MongoDB:27019 + RabbitMQ | Email рассылки |
+| **storage-service** | 3005 | MongoDB:27018 | Загрузка файлов |
 
 ---
 
-## ✅ Результаты тестирования
+## 🔧 Проведённые исправления
 
-### 1. Authentication API (account-service)
+### 1. Исправлены ошибки в конфигурации API Gateway
 
-| # | Тест | Ожидание | Результат |
-|---|------|----------|-----------|
-| 1 | Login с корректными данными | 201 + JWT | ✅ PASS |
-| 2 | Login с неверным паролем | 401 Unauthorized | ✅ PASS |
-| 3 | Login несуществующего пользователя | 404 Not Found | ✅ PASS |
-| 4 | Получение пользователя по ID | 200 + данные | ✅ PASS |
-| 5 | Получение несуществующего пользователя | 404 Not Found | ✅ PASS |
-| 6 | Регистрация нового пользователя | 201 Created | ✅ PASS |
-| 7 | Регистрация с существующим email | 409 Conflict | ✅ PASS |
-| 8 | Регистрация с коротким паролем | 400 Bad Request | ✅ PASS |
-| 9 | Регистрация с невалидным email | 400 Bad Request | ✅ PASS |
-| 10 | Невалидный MongoDB ID | 400 Bad Request | ✅ PASS |
+| Проблема | Решение |
+|----------|---------|
+| Неконсистентное именование `ApplicationServiceURL.Account` vs `Users` | Унифицировано на `Users` |
+| Отсутствие Swagger документации | Добавлен `DocumentBuilder` и `SwaggerModule` в main.ts |
+| Отсутствие `ValidationPipe` | Добавлена глобальная валидация DTO |
 
-**Результат:** 10/10 ✅
+### 2. Добавлены недостающие контроллеры
 
----
+| Контроллер | Файл | Описание |
+|------------|------|----------|
+| **UsersController** | `users.controller.ts` | Регистрация, логин, refresh, получение пользователя, смена пароля |
+| **ContentController** | `content.controller.ts` | CRUD для постов, поиск, фид, репосты |
+| **LikesController** | `engage.controller.ts` | Toggle лайка, проверка, подсчёт |
+| **CommentsController** | `engage.controller.ts` | CRUD для комментариев |
+| **SubscriptionsController** | `engage.controller.ts` | Подписки/отписки |
+| **FilesController** | `files.controller.ts` | Загрузка/получение файлов |
+| **NotifyController** | `notify.controller.ts` | Рассылка уведомлений |
 
-### 2. Content API (content-service)
+### 3. Созданы DTO с валидацией
 
-| # | Тест | Ожидание | Результат |
-|---|------|----------|-----------|
-| 1 | Получение списка постов | 200 + список | ✅ PASS |
-| 2 | Создание TEXT поста | 201 Created | ✅ PASS |
-| 3 | Создание VIDEO поста | 201 Created | ✅ PASS |
-| 4 | Создание QUOTE поста | 201 Created | ✅ PASS |
-| 5 | Создание LINK поста | 201 Created | ✅ PASS |
-| 6 | Получение поста по ID | 200 + данные | ✅ PASS |
-| 7 | Обновление поста | 200 OK | ✅ PASS |
-| 8 | Обновление чужого поста | 403 Forbidden | ✅ PASS |
-| 9 | Фильтрация по типу | 200 + filtered | ✅ PASS |
-| 10 | Фильтрация по тегу | 200 + filtered | ✅ PASS |
-| 11 | Поиск по заголовку | 200 + results | ✅ PASS |
-| 12 | Получение черновиков | 200 + список | ✅ PASS |
-| 13 | Репост поста | 201 Created | ✅ PASS |
-| 14 | Повторный репост | 409 Conflict | ✅ PASS |
-| 15 | Получение ленты | 200 + посты | ✅ PASS |
-| 16 | Пагинация | 200 + page | ✅ PASS |
-| 17 | Несуществующий пост | 404 Not Found | ✅ PASS |
-| 18 | Создание поста с коротким заголовком | 400 Bad Request | ✅ PASS* |
+| DTO | Валидация |
+|-----|-----------|
+| `CreatePostDto` | Тип поста, заголовок 20-50 символов, теги (max 8, 3-10 символов каждый) |
+| `UpdatePostDto` | Опциональные поля с теми же ограничениями |
+| `CreateCommentDto` | Текст 10-300 символов |
+| `ChangePasswordDto` | Пароль 6-12 символов |
 
-*Исправлено в процессе тестирования - добавлена валидация `@Length(20, 50)` в DTO
+### 4. Исправлены порты в .http файлах
 
-**Результат:** 18/18 ✅
+| Библиотека | Старый порт | Новый порт |
+|------------|-------------|------------|
+| authentication | 3000 | 3001 |
+| post-api | 3000 | 3002 |
+| like-api | 3002 | 3003 |
+| comment-api | 3002 | 3003 |
+| subscription-api | 3002 | 3003 |
+| file-uploader-api | 3000 | 3005 |
 
 ---
 
-### 3. Engage API - Likes (engage-service)
+## 📝 API Gateway Endpoints
 
-| # | Тест | Ожидание | Результат |
-|---|------|----------|-----------|
-| 1 | Получение количества лайков | 200 + count | ✅ PASS |
-| 2 | Добавление лайка | 201 + liked:true | ✅ PASS |
-| 3 | Проверка наличия лайка | 200 + liked:true | ✅ PASS |
-| 4 | Удаление лайка (toggle) | 201 + liked:false | ✅ PASS |
+### Users (`/api/users`)
+| Метод | Endpoint | Защита | Описание |
+|-------|----------|--------|----------|
+| POST | `/register` | Нет | Регистрация пользователя |
+| POST | `/login` | Нет | Авторизация (получение JWT) |
+| POST | `/refresh` | Bearer | Обновление токенов |
+| GET | `/:id` | Bearer | Получение пользователя (+ статистика) |
+| PATCH | `/password` | Bearer | Смена пароля |
 
-**Результат:** 4/4 ✅
+### Blog (`/api/blog`)
+| Метод | Endpoint | Защита | Описание |
+|-------|----------|--------|----------|
+| GET | `/` | Нет | Список публикаций (с фильтрами, пагинацией) |
+| GET | `/search/:query` | Нет | Поиск по заголовку |
+| GET | `/drafts` | Bearer | Черновики пользователя |
+| GET | `/feed` | Bearer | Лента подписок |
+| GET | `/:id` | Нет | Публикация по ID (+ лайки/комментарии) |
+| POST | `/` | Bearer | Создание публикации |
+| POST | `/:id/repost` | Bearer | Репост публикации |
+| PATCH | `/:id` | Bearer | Редактирование публикации |
+| DELETE | `/:id` | Bearer | Удаление публикации (каскадное) |
 
----
+### Likes (`/api/likes`)
+| Метод | Endpoint | Защита | Описание |
+|-------|----------|--------|----------|
+| POST | `/:postId` | Bearer | Toggle лайка |
+| GET | `/:postId/count` | Нет | Количество лайков |
+| GET | `/:postId/check` | Bearer | Проверка лайка |
 
-### 4. Engage API - Comments (engage-service)
+### Comments (`/api/comments`)
+| Метод | Endpoint | Защита | Описание |
+|-------|----------|--------|----------|
+| GET | `/:postId` | Нет | Список комментариев |
+| POST | `/:postId` | Bearer | Создание комментария |
+| GET | `/:postId/count` | Нет | Количество комментариев |
+| DELETE | `/:commentId` | Bearer | Удаление комментария |
 
-| # | Тест | Ожидание | Результат |
-|---|------|----------|-----------|
-| 1 | Получение комментариев | 200 + список | ✅ PASS |
-| 2 | Создание комментария | 201 Created | ✅ PASS |
-| 3 | Создание короткого комментария | 400 Bad Request | ✅ PASS |
-| 4 | Получение количества комментариев | 200 + count | ✅ PASS |
-| 5 | Удаление комментария | 204 No Content | ✅ PASS |
-| 6 | Удаление чужого комментария | 403 Forbidden | ✅ PASS |
+### Subscriptions (`/api/subscriptions`)
+| Метод | Endpoint | Защита | Описание |
+|-------|----------|--------|----------|
+| POST | `/:userId` | Bearer | Подписаться на пользователя |
+| DELETE | `/:userId` | Bearer | Отписаться от пользователя |
+| GET | `/following` | Bearer | Список подписок |
+| GET | `/followers` | Bearer | Список подписчиков |
+| GET | `/:userId/followers/count` | Нет | Количество подписчиков |
+| GET | `/:userId/check` | Bearer | Проверка подписки |
 
-**Результат:** 6/6 ✅
+### Files (`/api/files`)
+| Метод | Endpoint | Защита | Описание |
+|-------|----------|--------|----------|
+| POST | `/upload` | Bearer | Загрузка файла |
+| GET | `/:fileId` | Нет | Получение файла |
 
----
-
-### 5. Engage API - Subscriptions (engage-service)
-
-| # | Тест | Ожидание | Результат |
-|---|------|----------|-----------|
-| 1 | Подписка на пользователя | 201 + subscribed:true | ✅ PASS |
-| 2 | Получение списка подписчиков | 200 + userIds | ✅ PASS |
-| 3 | Получение списка подписок | 200 + userIds | ✅ PASS |
-| 4 | Проверка наличия подписки | 200 + subscribed | ✅ PASS |
-| 5 | Отписка от пользователя | 200 + subscribed:false | ✅ PASS |
-| 6 | Подписка на самого себя | 400 Bad Request | ✅ PASS |
-
-**Результат:** 6/6 ✅
-
----
-
-### 6. Storage API (storage-service)
-
-| # | Тест | Ожидание | Результат |
-|---|------|----------|-----------|
-| 1 | Загрузка файла | 201 + file info | ✅ PASS |
-| 2 | Получение файла по ID | 200 + file info | ✅ PASS |
-| 3 | Несуществующий файл | 404 Not Found | ✅ PASS |
-
-**Результат:** 3/3 ✅
-
----
-
-### 7. Notify API (notify-service)
-
-| # | Тест | Ожидание | Результат |
-|---|------|----------|-----------|
-| 1 | Отправка уведомлений | 200 + sentCount | ✅ PASS |
-| 2 | Создание подписчика через RabbitMQ | Subscriber created | ✅ PASS |
-| 3 | Получение постов из content-service | Posts fetched | ✅ PASS |
-
-**Результат:** 3/3 ✅
+### Notifications (`/api/notify`)
+| Метод | Endpoint | Защита | Описание |
+|-------|----------|--------|----------|
+| POST | `/send` | Bearer | Рассылка уведомлений |
 
 ---
 
-## 📊 Итоговая статистика
+## ✅ Соответствие техническому заданию
 
-| Сервис | Тестов | Пройдено | Провалено |
-|--------|--------|----------|-----------|
-| Authentication API | 10 | 10 | 0 |
-| Content API | 18 | 18 | 0 |
-| Engage API (Likes) | 4 | 4 | 0 |
-| Engage API (Comments) | 6 | 6 | 0 |
-| Engage API (Subscriptions) | 6 | 6 | 0 |
-| Storage API | 3 | 3 | 0 |
-| Notify API | 3 | 3 | 0 |
-| **ИТОГО** | **50** | **50** | **0** |
+### Требования к API Gateway (из задания):
+
+| Требование | Статус | Комментарий |
+|------------|--------|-------------|
+| Создать в монорепозитории новый проект для API Gateway | ✅ | `apps/api-gateway` |
+| Спроектировать REST API на основе макета и ТЗ | ✅ | Полный набор endpoints |
+| API Gateway - слой представления данных | ✅ | Нет бизнес-логики, только проксирование |
+| Трансформация данных | ✅ | Агрегация данных из нескольких сервисов |
+| Аутентификация/авторизация | ✅ | `CheckAuthGuard` для защищённых endpoints |
+| Подключить Swagger модуль | ✅ | Доступен на `http://localhost:4000/spec` |
+| Расставить аннотации для документации | ✅ | `@ApiTags`, `@ApiOperation`, `@ApiResponse`, `@ApiBearerAuth` |
+
+### Функциональность по ТЗ:
+
+- [x] Регистрация новых пользователей (1.1-1.7)
+- [x] Авторизация пользователей на основе JWT (1.8)
+- [x] Смена пароля пользователя (1.9)
+- [x] Детальная информация о пользователе (1.10)
+- [x] Создание публикаций разных видов (2.4-2.9)
+- [x] Редактирование публикаций (2.1-2.2)
+- [x] Удаление публикаций с каскадным удалением комментариев (2.3)
+- [x] Репост публикаций (2.13)
+- [x] Детальная информация о публикации (2.14)
+- [x] Список публикаций с пагинацией и сортировкой (3.1-3.6)
+- [x] Фильтрация по типу и тегам (3.8, 3.11)
+- [x] Черновики пользователя (3.9)
+- [x] Лента пользователя (4.1-4.6)
+- [x] Лайки к публикациям (5.1-5.3)
+- [x] Комментарии к публикациям (6.1-6.6)
+- [x] Рассылка уведомлений (7.1-7.5)
+- [x] Поиск публикаций по названию (8.1-8.3)
+- [x] Загрузка изображений (1.4, 2.8)
 
 ---
 
-## ✅ Проверенная функциональность по ТЗ
+## 📂 Структура файлов API Gateway
 
-- [x] Регистрация новых пользователей
-- [x] Авторизация пользователей на основе JWT
-- [x] Создание публикаций разных видов (видео, текст, цитата, ссылка)
-- [x] Просмотр детальной информации о публикации
-- [x] Редактирование публикаций
-- [x] Удаление публикаций
-- [x] Загрузка изображений для публикации
-- [x] Комментирование публикаций
-- [x] Лайки к публикациям
-- [x] Пагинация для публикаций
-- [x] Получение списка публикаций с сортировкой
-- [x] Репост публикаций
-- [x] Категоризация публикаций по тегам
-- [x] Рассылка почтовых уведомлений
-- [x] Поиск публикаций по названию
-- [x] Получение детальной информации о пользователе
-- [x] Подписка на обновления других пользователей
+```
+apps/api-gateway/src/
+├── main.ts                    # Entry point + Swagger setup
+└── app/
+    ├── app.module.ts          # Main module
+    ├── app.config.ts          # Service URLs configuration
+    ├── app.http               # HTTP requests for testing
+    ├── users.controller.ts    # Users endpoints
+    ├── content.controller.ts  # Blog/Posts endpoints
+    ├── engage.controller.ts   # Likes, Comments, Subscriptions
+    ├── files.controller.ts    # File upload/download
+    ├── notify.controller.ts   # Notifications
+    ├── dto/
+    │   ├── create-post.dto.ts
+    │   ├── update-post.dto.ts
+    │   ├── create-comment.dto.ts
+    │   └── change-password.dto.ts
+    ├── guards/
+    │   └── check-auth.guard.ts
+    └── filters/
+        └── axios-exception.filter.ts
+```
+
+---
+
+## 🚀 Запуск и тестирование
+
+### Запуск всех сервисов:
+```bash
+# Запуск инфраструктуры (MongoDB, PostgreSQL, RabbitMQ)
+cd project
+docker-compose -f apps/account-service/docker-compose.dev.yml up -d
+docker-compose -f apps/content-service/docker-compose.dev.yml up -d
+docker-compose -f apps/engage-service/docker-compose.dev.yml up -d
+docker-compose -f apps/notify-service/notify-service.compose.dev.yml up -d
+docker-compose -f apps/storage-service/storage-service.compose.dev.yml up -d
+
+# Запуск сервисов
+nx run account-service:serve
+nx run content-service:serve
+nx run engage-service:serve
+nx run notify-service:serve
+nx run storage-service:serve
+nx run api-gateway:serve
+```
+
+### Swagger документация:
+- API Gateway: http://localhost:4000/spec
+- Account Service: http://localhost:3001/spec
+- Content Service: http://localhost:3002/spec
+- Engage Service: http://localhost:3003/spec
 
 ---
 
 ## 🎉 Заключение
 
-**Статус проекта:** ✅ **ГОТОВ К ИСПОЛЬЗОВАНИЮ**
+**Статус проекта:** ✅ **API Gateway полностью реализован**
 
-Все микросервисы успешно запущены и протестированы. Проект полностью соответствует техническому заданию. Все выявленные в процессе тестирования баги были исправлены.
+API Gateway успешно реализован как единая точка входа для фронтенда. Все endpoints покрыты Swagger документацией и защищены JWT авторизацией где требуется. Проект полностью соответствует техническому заданию модуля 7.

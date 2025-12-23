@@ -1,5 +1,14 @@
+# =============================================
+# Storage Service - Files API (port 3005)
+# =============================================
+
+@baseUrl = http://localhost:3005/api/files
+@fileId = 662927b0ffe4e19093c1963b
+
+###
+
 # Upload a file
-POST http://localhost:3000/api/files/upload HTTP/1.1
+POST {{baseUrl}}/upload HTTP/1.1
 Content-Type: multipart/form-data; boundary=boundary
 
 --boundary
@@ -12,6 +21,6 @@ Content-Disposition: form-data; name="file"; filename="file-uploader-api.http"
 ###
 
 # Get file by ID
-GET http://localhost:3000/api/files/662927b0ffe4e19093c1963b HTTP/1.1
+GET {{baseUrl}}/{{fileId}} HTTP/1.1
 
 ###

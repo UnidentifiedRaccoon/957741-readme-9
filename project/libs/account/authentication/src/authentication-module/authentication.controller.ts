@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthenticationService } from './authentication.service';
 import { CreateUserDto } from '../dto/create-user.dto';
@@ -9,6 +9,11 @@ import { AuthenticationResponseMessage } from './authentication.constant';
 import { userToRdo, loggedUserToRdo } from './authentication.mapper';
 import { MongoIdValidationPipe } from '@project/pipes';
 import { NotifyService } from '@project/account-notify';
+import { RequestWithUser } from './request-with-user.interface';
+import { LocalAuthGuard } from '../guards/local-auth.guard';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { JwtRefreshGuard } from '../guards/jwt-refresh.guard';
+import { RequestWithTokenPayload } from './request-with-token-payload.interface';
 
 @ApiTags('authentication')
 @Controller('auth')
@@ -48,9 +53,12 @@ export class AuthenticationController {
       status: HttpStatus.NOT_FOUND,
       description: AuthenticationResponseMessage.UserNotFound,
     })
+    @UseGuards(LocalAuthGuard)
     @Post('login')
-    public async login(@Body() dto: LoginUserDto): Promise<LoggedUserRdo> {
-      const user = await this.authService.login(dto);
+    public async login(
+      @Body() _dto: LoginUserDto, // Для Swagger документации и валидации
+      @Req() { user }: RequestWithUser,
+    ) {
       const userToken = await this.authService.createUserToken(user);
       return loggedUserToRdo(user, userToken.accessToken);
     }   
@@ -65,9 +73,27 @@ export class AuthenticationController {
       description: AuthenticationResponseMessage.UserNotFound,
     })
     @ApiParam({ name: 'id', description: 'User ID' })
+    @UseGuards(JwtAuthGuard)
     @Get('user/:id')
     public async getUser(@Param('id', MongoIdValidationPipe) id: string): Promise<UserRdo> {
       const user = await this.authService.getUser(id);
       return userToRdo(user);
+    }
+
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+      status: HttpStatus.OK,
+      description: 'Get a new access/refresh tokens'
+    })
+    @UseGuards(JwtRefreshGuard)
+    @Post('refresh')
+    public async refreshToken(@Req() { user }: RequestWithUser) {
+      return this.authService.createUserToken(user);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('check')
+    public async checkToken(@Req() { user: payload }: RequestWithTokenPayload) {
+      return payload;
     }
   }

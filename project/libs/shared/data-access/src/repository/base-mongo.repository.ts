@@ -20,11 +20,11 @@ export abstract class BaseMongoRepository<
       return null;
     }
 
-    const plainObject = document.toObject({ versionKey: false });
+    const plainObject = document.toObject({ getters: true, versionKey: false, flattenObjectIds: true });
     // Map MongoDB _id to entity id
     const entityData = {
       ...plainObject,
-      id: plainObject._id?.toString(),
+      id: plainObject._id,
     } as ReturnType<T['toPOJO']>;
     return this.entityFactory.create(entityData);
   }
@@ -34,14 +34,14 @@ export abstract class BaseMongoRepository<
     return this.createEntityFromDocument(document);
   }
 
-  public async save(entity: T): Promise<void> {
-    const newEntity = new this.model(entity.toPOJO());
-    await newEntity.save();
+  public async save(entity: T): Promise<T> {
+    const document = new this.model(entity.toPOJO());
+    await document.save();
 
-    entity.id = newEntity._id.toString();
+    return this.createEntityFromDocument(document as DocumentType) as T;
   }
 
-  public async update(entity: T): Promise<void> {
+  public async update(entity: T): Promise<T> {
     const updatedDocument = await this.model.findByIdAndUpdate(
       entity.id,
       entity.toPOJO() as UpdateQuery<DocumentType>,
@@ -52,6 +52,8 @@ export abstract class BaseMongoRepository<
     if (!updatedDocument) {
       throw new NotFoundException(`Entity with id ${entity.id} not found`);
     }
+
+    return this.createEntityFromDocument(updatedDocument) as T;
   }
 
   public async deleteById(id: T['id']): Promise<void> {

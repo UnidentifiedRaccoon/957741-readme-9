@@ -50,6 +50,7 @@
         "libs/storage/file-uploader-api/src/index.ts"
       ],
       "@project/helpers": ["libs/shared/helpers/src/index.ts"],
+      "@project/interceptors": ["libs/shared/interceptors/src/index.ts"],
       "@project/mail": ["libs/notify/mail/src/index.ts"],
       "@project/mailer": ["libs/notify/mailer/src/index.ts"],
       "@project/notify-config": ["libs/notify/config/src/index.ts"],

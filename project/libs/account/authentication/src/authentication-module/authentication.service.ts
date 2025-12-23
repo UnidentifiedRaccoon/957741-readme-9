@@ -1,9 +1,11 @@
 import dayjs from 'dayjs';
+import { StringValue } from 'ms';
 import { JwtService } from '@nestjs/jwt';
 import {
   ConflictException,
   HttpException,
   HttpStatus,
+  Inject,
   Injectable,
   Logger,
   NotFoundException,
@@ -14,6 +16,10 @@ import { Token, TokenPayload, User } from '@project/core';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { AUTH_USER_EXISTS, AUTH_USER_NOT_FOUND, AUTH_USER_PASSWORD_WRONG } from './authentication.constant';
 import { LoginUserDto } from '../dto/login-user.dto';
+import { jwtConfig } from '@project/account-config';
+import { ConfigType } from '@nestjs/config';
+import { RefreshTokenService } from '../refresh-token-module/refresh-token.service';
+import { createJWTPayload } from '@project/helpers';
 
 @Injectable()
 export class AuthenticationService {
@@ -23,6 +29,8 @@ export class AuthenticationService {
     private readonly blogUserRepository: BlogUserRepository,
     private readonly blogUserFactory: BlogUserFactory,
     private readonly jwtService: JwtService,
+    @Inject(jwtConfig.KEY) private readonly jwtOptions: ConfigType<typeof jwtConfig>,
+    private readonly refreshTokenService: RefreshTokenService,
   ) {}
 
   public async register(dto: CreateUserDto): Promise<BlogUserEntity> {
@@ -40,9 +48,8 @@ export class AuthenticationService {
     }
 
     const userEntity = await this.blogUserFactory.create(blogUser).setPassword(password);
-    await this.blogUserRepository.save(userEntity);
 
-    return userEntity
+    return this.blogUserRepository.save(userEntity);
   }
 
   public async login(dto: LoginUserDto): Promise<BlogUserEntity> {
@@ -69,19 +76,32 @@ export class AuthenticationService {
   }
 
   public async createUserToken(user: User): Promise<Token> {
-    const payload: TokenPayload = {
-      sub: user.id ?? '',
-      email: user.email,
-      lastname: user.lastname,
-      firstname: user.firstname,
-    };
+    const accessTokenPayload = createJWTPayload(user);
+    const refreshTokenPayload = { ...accessTokenPayload, tokenId: crypto.randomUUID() };
+    await this.refreshTokenService.createRefreshSession(refreshTokenPayload);
 
     try {
-      const accessToken = await this.jwtService.signAsync(payload);
-      return { accessToken };
+      const accessToken = await this.jwtService.signAsync(accessTokenPayload);
+
+      const refreshToken = await this.jwtService.signAsync(refreshTokenPayload, {
+        secret: this.jwtOptions.refreshTokenSecret,
+        expiresIn: this.jwtOptions.refreshTokenExpiresIn as StringValue,
+      });
+
+      return { accessToken, refreshToken };
     } catch (error) {
       this.logger.error('[Token generation error]: ' + (error as Error).message);
       throw new HttpException('Ошибка при создании токена.', HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  public async getUserByEmail(email: string): Promise<BlogUserEntity> {
+    const existUser = await this.blogUserRepository.findByEmail(email);
+
+    if (! existUser) {
+      throw new NotFoundException(`User with email ${email} not found`);
+    }
+
+    return existUser;
   }
 }

@@ -1,15 +1,18 @@
 # =============================================
-# Seeded Users (created by running: nx run account-service:db:seed)
+# Account Service API (port 3001)
 # =============================================
+# Seeded Users (created by running: nx run account-service:db:seed)
 # User 1: user@notfound.local / 123456 - ID: 658170cbb954e9f5b905ccf4
 # User 2: alice@example.com / qwerty - ID: 6581762309c030b503e30512
 # User 3: bob@example.com / password123 - ID: 6581762309c030b503e30513
 # =============================================
 
+@baseUrl = http://localhost:3001/api/auth
+
 ###
 
 # Login with seeded user (user@notfound.local)
-POST http://localhost:3000/api/auth/login HTTP/1.1
+POST {{baseUrl}}/login HTTP/1.1
 Content-Type: application/json
 
 {
@@ -19,13 +22,14 @@ Content-Type: application/json
 
 ###
 
-# Get seeded user by ID (Keks Smith)
-GET http://localhost:3000/api/auth/user/658170cbb954e9f5b905ccf4 HTTP/1.1
+# Get seeded user by ID (Keks Smith) - requires JWT
+GET {{baseUrl}}/user/658170cbb954e9f5b905ccf4 HTTP/1.1
+Authorization: Bearer {{token}}
 
 ###
 
 # Login with seeded user (alice@example.com)
-POST http://localhost:3000/api/auth/login HTTP/1.1
+POST {{baseUrl}}/login HTTP/1.1
 Content-Type: application/json
 
 {
@@ -36,12 +40,13 @@ Content-Type: application/json
 ###
 
 # Get seeded user by ID (Alice Johnson)
-GET http://localhost:3000/api/auth/user/6581762309c030b503e30512 HTTP/1.1
+GET {{baseUrl}}/user/6581762309c030b503e30512 HTTP/1.1
+Authorization: Bearer {{token}}
 
 ###
 
 # Login with seeded user (bob@example.com)
-POST http://localhost:3000/api/auth/login HTTP/1.1
+POST {{baseUrl}}/login HTTP/1.1
 Content-Type: application/json
 
 {
@@ -52,7 +57,8 @@ Content-Type: application/json
 ###
 
 # Get seeded user by ID (Bob Williams)
-GET http://localhost:3000/api/auth/user/6581762309c030b503e30513 HTTP/1.1
+GET {{baseUrl}}/user/6581762309c030b503e30513 HTTP/1.1
+Authorization: Bearer {{token}}
 
 ###
 
@@ -61,7 +67,7 @@ GET http://localhost:3000/api/auth/user/6581762309c030b503e30513 HTTP/1.1
 # =============================================
 
 # Register a new user
-POST http://localhost:3000/api/auth/register HTTP/1.1
+POST {{baseUrl}}/register HTTP/1.1
 Content-Type: application/json
 
 {
@@ -75,7 +81,7 @@ Content-Type: application/json
 ###
 
 # Test: Try to register user with existing email (should fail with 409 Conflict)
-POST http://localhost:3000/api/auth/register HTTP/1.1
+POST {{baseUrl}}/register HTTP/1.1
 Content-Type: application/json
 
 {
@@ -93,7 +99,7 @@ Content-Type: application/json
 # =============================================
 
 # Test: Try to login with wrong password (should fail with 401 Unauthorized)
-POST http://localhost:3000/api/auth/login HTTP/1.1
+POST {{baseUrl}}/login HTTP/1.1
 Content-Type: application/json
 
 {
@@ -104,7 +110,7 @@ Content-Type: application/json
 ###
 
 # Test: Try to login with non-existing email (should fail with 404 Not Found)
-POST http://localhost:3000/api/auth/login HTTP/1.1
+POST {{baseUrl}}/login HTTP/1.1
 Content-Type: application/json
 
 {
@@ -115,7 +121,14 @@ Content-Type: application/json
 ###
 
 # Test: Try to get non-existing user (should fail with 404 Not Found)
-GET http://localhost:3000/api/auth/user/000000000000000000000000 HTTP/1.1
+GET {{baseUrl}}/user/000000000000000000000000 HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+
+# Check user token
+POST {{baseUrl}}/check HTTP/1.1
+Authorization: Bearer {{token}}
 
 ###
 
