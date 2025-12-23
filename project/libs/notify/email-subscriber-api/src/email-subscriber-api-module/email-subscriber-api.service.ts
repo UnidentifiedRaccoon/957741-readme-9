@@ -46,8 +46,8 @@ export class EmailSubscriberApiService {
     });
 
     this.logger.log(`Creating new subscriber: ${email}`);
-    await this.emailSubscriberRepository.save(subscriberEntity);
-    return subscriberEntity;
+
+    return this.emailSubscriberRepository.save(subscriberEntity);
   }
 
   public async getSubscriberByEmail(email: string): Promise<EmailSubscriberEntity | null> {

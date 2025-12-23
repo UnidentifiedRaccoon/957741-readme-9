@@ -25,9 +25,7 @@ export class RefreshTokenService {
       expiresIn: dayjs().add(timeValue.value, timeValue.unit).toDate()
     });
 
-    await this.refreshTokenRepository.save(refreshToken);
-
-    return refreshToken;
+    return this.refreshTokenRepository.save(refreshToken);
   }
 
   public async deleteRefreshSession(tokenId: string): Promise<void> {

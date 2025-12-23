@@ -34,14 +34,14 @@ export abstract class BaseMongoRepository<
     return this.createEntityFromDocument(document);
   }
 
-  public async save(entity: T): Promise<void> {
-    const newEntity = new this.model(entity.toPOJO());
-    await newEntity.save();
+  public async save(entity: T): Promise<T> {
+    const document = new this.model(entity.toPOJO());
+    await document.save();
 
-    entity.id = newEntity._id.toString();
+    return this.createEntityFromDocument(document as DocumentType) as T;
   }
 
-  public async update(entity: T): Promise<void> {
+  public async update(entity: T): Promise<T> {
     const updatedDocument = await this.model.findByIdAndUpdate(
       entity.id,
       entity.toPOJO() as UpdateQuery<DocumentType>,
@@ -52,6 +52,8 @@ export abstract class BaseMongoRepository<
     if (!updatedDocument) {
       throw new NotFoundException(`Entity with id ${entity.id} not found`);
     }
+
+    return this.createEntityFromDocument(updatedDocument) as T;
   }
 
   public async deleteById(id: T['id']): Promise<void> {

@@ -75,8 +75,7 @@ export class FileUploaderApiService {
       updatedAt: undefined,
     });
 
-    await this.fileRepository.save(fileEntity);
-    return fileEntity;
+    return this.fileRepository.save(fileEntity);
   }
 
   public async getById(fileId: string): Promise<FileUploaderEntity> {
