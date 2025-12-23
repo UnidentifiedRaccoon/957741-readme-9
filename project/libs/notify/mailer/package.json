@@ -6,6 +6,11 @@
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "dependencies": {
+    "@nestjs/common": "11.1.8",
+    "handlebars": "^4.7.8",
+    "nodemailer": "7.0.11",
     "tslib": "^2.3.0"
   }
 }
+
+
