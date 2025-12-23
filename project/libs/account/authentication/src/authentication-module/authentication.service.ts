@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { StringValue } from 'ms';
 import { JwtService } from '@nestjs/jwt';
 import {
   ConflictException,
@@ -85,7 +86,7 @@ export class AuthenticationService {
 
       const refreshToken = await this.jwtService.signAsync(payload, {
         secret: this.jwtOptions.refreshTokenSecret,
-        expiresIn: this.jwtOptions.refreshTokenExpiresIn
+        expiresIn: this.jwtOptions.refreshTokenExpiresIn as StringValue,
       });
 
       return { accessToken, refreshToken };
@@ -93,5 +94,15 @@ export class AuthenticationService {
       this.logger.error('[Token generation error]: ' + (error as Error).message);
       throw new HttpException('Ошибка при создании токена.', HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  public async getUserByEmail(email: string): Promise<BlogUserEntity> {
+    const existUser = await this.blogUserRepository.findByEmail(email);
+
+    if (! existUser) {
+      throw new NotFoundException(`User with email ${email} not found`);
+    }
+
+    return existUser;
   }
 }
