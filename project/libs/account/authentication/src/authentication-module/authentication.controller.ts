@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthenticationService } from './authentication.service';
 import { CreateUserDto } from '../dto/create-user.dto';
@@ -9,6 +9,8 @@ import { AuthenticationResponseMessage } from './authentication.constant';
 import { userToRdo, loggedUserToRdo } from './authentication.mapper';
 import { MongoIdValidationPipe } from '@project/pipes';
 import { NotifyService } from '@project/account-notify';
+import { RequestWithUser } from './request-with-user.interface';
+import { LocalAuthGuard } from '../guards/local-auth.guard';
 
 @ApiTags('authentication')
 @Controller('auth')
@@ -48,9 +50,9 @@ export class AuthenticationController {
       status: HttpStatus.NOT_FOUND,
       description: AuthenticationResponseMessage.UserNotFound,
     })
+    @UseGuards(LocalAuthGuard)
     @Post('login')
-    public async login(@Body() dto: LoginUserDto): Promise<LoggedUserRdo> {
-      const user = await this.authService.login(dto);
+    public async login(@Req() { user }: RequestWithUser) {
       const userToken = await this.authService.createUserToken(user);
       return loggedUserToRdo(user, userToken.accessToken);
     }   
