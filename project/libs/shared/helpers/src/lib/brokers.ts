@@ -2,7 +2,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { getRabbitMQConnectionString } from './common';
 
-export function getRabbitMQOptions(optionSpace) {
+export function getRabbitMQOptions(optionSpace: string) {
   return {
     useFactory: async (config: ConfigService) => ({
       exchanges: [
@@ -11,11 +11,11 @@ export function getRabbitMQOptions(optionSpace) {
           type: 'direct'
         }
       ],
-      uri:getRabbitMQConnectionString({
-        host: config.get<string>(`${optionSpace}.host`),
-        password: config.get<string>(`${optionSpace}.password`),
-        user: config.get<string>(`${optionSpace}.user`),
-        port: config.get<string>(`${optionSpace}.port`),
+      uri: getRabbitMQConnectionString({
+        host: config.get<string>(`${optionSpace}.host`) ?? '',
+        password: config.get<string>(`${optionSpace}.password`) ?? '',
+        user: config.get<string>(`${optionSpace}.user`) ?? '',
+        port: config.get<number>(`${optionSpace}.port`) ?? 5672,
       }),
       connectionInitOptions: { wait: false },
       enableControllerDiscovery: true,

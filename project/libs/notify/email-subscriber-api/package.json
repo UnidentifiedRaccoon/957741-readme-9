@@ -6,6 +6,18 @@
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "dependencies": {
+    "@golevelup/nestjs-rabbitmq": "^6.0.0",
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/config": "^4.0.0",
+    "@nestjs/swagger": "^11.0.0",
+    "@project/core": "*",
+    "@project/email-subscriber": "*",
+    "@project/helpers": "*",
+    "@project/mail": "*",
+    "@project/notify-config": "*",
+    "axios": "^1.0.0",
+    "class-transformer": "^0.5.0",
+    "class-validator": "^0.14.0",
     "tslib": "^2.3.0"
   }
 }

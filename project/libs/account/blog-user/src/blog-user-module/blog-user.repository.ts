@@ -20,4 +20,11 @@ export class BlogUserRepository extends BaseMongoRepository<BlogUserEntity, Blog
     const document = await this.model.findOne({ email }).exec();
     return this.createEntityFromDocument(document);
   }
+
+  public async updatePasswordHash(userId: string, passwordHash: string): Promise<BlogUserEntity | null> {
+    const document = await this.model
+      .findByIdAndUpdate(userId, { passwordHash }, { new: true })
+      .exec();
+    return this.createEntityFromDocument(document);
+  }
 }

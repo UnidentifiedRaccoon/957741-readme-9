@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 
 export class RequestIdInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const requestId = crypto.randomUUID();
 
     const request = context.switchToHttp().getRequest<Request>();

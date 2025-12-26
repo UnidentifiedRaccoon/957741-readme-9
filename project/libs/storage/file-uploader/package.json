@@ -6,6 +6,11 @@
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "dependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/mongoose": "^11.0.0",
+    "@project/core": "*",
+    "@project/data-access": "*",
+    "mongoose": "^8.0.0",
     "tslib": "^2.3.0"
   }
 }

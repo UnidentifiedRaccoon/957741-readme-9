@@ -12,7 +12,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { BlogUserEntity, BlogUserRepository, BlogUserFactory } from '@project/blog-user';
-import { Token, TokenPayload, User } from '@project/core';
+import { Token, User } from '@project/core';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { AUTH_USER_EXISTS, AUTH_USER_NOT_FOUND, AUTH_USER_PASSWORD_WRONG } from './authentication.constant';
 import { LoginUserDto } from '../dto/login-user.dto';
@@ -103,5 +103,26 @@ export class AuthenticationService {
     }
 
     return existUser;
+  }
+
+  public async changePassword(userId: string, currentPassword: string, newPassword: string): Promise<BlogUserEntity> {
+    const user = await this.blogUserRepository.findById(userId);
+
+    if (!user) {
+      throw new NotFoundException(AUTH_USER_NOT_FOUND);
+    }
+
+    if (!(await user.comparePassword(currentPassword))) {
+      throw new UnauthorizedException(AUTH_USER_PASSWORD_WRONG);
+    }
+
+    await user.setPassword(newPassword);
+    const updatedUser = await this.blogUserRepository.updatePasswordHash(userId, user.passwordHash);
+
+    if (!updatedUser) {
+      throw new NotFoundException(AUTH_USER_NOT_FOUND);
+    }
+
+    return updatedUser;
   }
 }

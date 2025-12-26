@@ -1,8 +1,9 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthenticationService } from './authentication.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { LoginUserDto } from '../dto/login-user.dto';
+import { ChangePasswordDto } from '../dto/change-password.dto';
 import { UserRdo } from '../rdo/user.rdo';
 import { LoggedUserRdo } from '../rdo/logged-user.rdo';
 import { AuthenticationResponseMessage } from './authentication.constant';
@@ -95,5 +96,29 @@ export class AuthenticationController {
     @Post('check')
     public async checkToken(@Req() { user: payload }: RequestWithTokenPayload) {
       return payload;
+    }
+
+    @ApiResponse({
+      status: HttpStatus.OK,
+      description: 'Password changed successfully',
+      type: UserRdo,
+    })
+    @ApiResponse({
+      status: HttpStatus.UNAUTHORIZED,
+      description: 'Current password is wrong',
+    })
+    @ApiResponse({
+      status: HttpStatus.NOT_FOUND,
+      description: AuthenticationResponseMessage.UserNotFound,
+    })
+    @UseGuards(JwtAuthGuard)
+    @Patch('password')
+    public async changePassword(@Body() dto: ChangePasswordDto): Promise<UserRdo> {
+      const updatedUser = await this.authService.changePassword(
+        dto.userId,
+        dto.currentPassword,
+        dto.newPassword,
+      );
+      return userToRdo(updatedUser);
     }
   }
