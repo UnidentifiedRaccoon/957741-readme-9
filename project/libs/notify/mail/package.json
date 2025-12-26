@@ -6,6 +6,12 @@
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "dependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/config": "^4.0.0",
+    "@project/core": "*",
+    "@project/helpers": "*",
+    "@project/mailer": "*",
+    "@project/notify-config": "*",
     "tslib": "^2.3.0"
   }
 }

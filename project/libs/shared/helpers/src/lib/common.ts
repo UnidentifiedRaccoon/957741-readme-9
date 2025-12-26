@@ -1,5 +1,6 @@
 import { ClassTransformOptions, plainToInstance } from 'class-transformer';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type PlainObject = Record<string, any>;
 export type DateTimeUnit = 's' | 'h' | 'd' | 'm' | 'y';
 export type TimeAndUnit = { value: number; unit: DateTimeUnit };
@@ -40,7 +41,14 @@ export function getMongoConnectionString({username, password, host, port, databa
   return `mongodb://${username}:${password}@${host}:${port}/${databaseName}?authSource=${authDatabase}`;
 }
 
-export function getRabbitMQConnectionString({user, password, host, port}): string {
+export interface GetRabbitMQConnectionStringParams {
+  user: string;
+  password: string;
+  host: string;
+  port: number;
+}
+
+export function getRabbitMQConnectionString({user, password, host, port}: GetRabbitMQConnectionStringParams): string {
   return `amqp://${user}:${password}@${host}:${port}`;
 }
 
