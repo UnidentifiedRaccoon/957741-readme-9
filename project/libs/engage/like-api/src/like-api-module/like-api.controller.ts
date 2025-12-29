@@ -25,7 +25,7 @@ export class LikeApiController {
   @Post(':postId')
   public async toggleLike(
     @Param('postId') postId: string,
-    @Query() { userId }: UserIdQueryDto, // TODO: Get from JWT token
+    @Query() { userId }: UserIdQueryDto,
   ): Promise<{ liked: boolean }> {
     return this.likeApiService.toggleLike(postId, userId);
   }

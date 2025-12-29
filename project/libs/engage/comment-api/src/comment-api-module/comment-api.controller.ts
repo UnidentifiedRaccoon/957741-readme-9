@@ -33,7 +33,7 @@ export class CommentApiController {
   public async create(
     @Param('postId') postId: string,
     @Body() dto: CreateCommentDto,
-    @Query() { userId }: UserIdQueryDto, // TODO: Get from JWT token
+    @Query() { userId }: UserIdQueryDto,
   ): Promise<CommentRdo> {
     const comment = await this.commentApiService.createComment(postId, dto, userId);
     return commentToRdo(comment);
@@ -85,7 +85,7 @@ export class CommentApiController {
   @HttpCode(HttpStatus.NO_CONTENT)
   public async delete(
     @Param('commentId') commentId: string,
-    @Query() { userId }: UserIdQueryDto, // TODO: Get from JWT token
+    @Query() { userId }: UserIdQueryDto,
   ): Promise<void> {
     await this.commentApiService.deleteComment(commentId, userId);
   }

@@ -39,7 +39,7 @@ export class SubscriptionApiController {
   @Post(':userId')
   public async subscribe(
     @Param('userId', MongoIdValidationPipe) followingId: string,
-    @Query() { followerId }: FollowerIdQueryDto, // TODO: Get from JWT token
+    @Query() { followerId }: FollowerIdQueryDto,
   ): Promise<{ subscribed: boolean }> {
     return this.subscriptionApiService.subscribe(followerId, followingId);
   }
@@ -53,7 +53,7 @@ export class SubscriptionApiController {
   @Delete(':userId')
   public async unsubscribe(
     @Param('userId', MongoIdValidationPipe) followingId: string,
-    @Query() { followerId }: FollowerIdQueryDto, // TODO: Get from JWT token
+    @Query() { followerId }: FollowerIdQueryDto,
   ): Promise<{ subscribed: boolean }> {
     return this.subscriptionApiService.unsubscribe(followerId, followingId);
   }
