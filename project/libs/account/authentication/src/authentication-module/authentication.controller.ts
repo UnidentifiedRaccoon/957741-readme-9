@@ -7,7 +7,7 @@ import { ChangePasswordDto } from '../dto/change-password.dto';
 import { UserRdo } from '../rdo/user.rdo';
 import { LoggedUserRdo } from '../rdo/logged-user.rdo';
 import { AuthenticationResponseMessage } from './authentication.constant';
-import { userToRdo, loggedUserToRdo } from './authentication.mapper';
+import { mapUserToRdo, mapLoggedUserToRdo } from './authentication.mapper';
 import { MongoIdValidationPipe } from '@project/pipes';
 import { NotifyService } from '@project/account-notify';
 import { RequestWithUser } from './request-with-user.interface';
@@ -38,7 +38,7 @@ export class AuthenticationController {
       const newUser = await this.authService.register(dto);
       const { email, firstname, lastname } = newUser;
       await this.notifyService.registerSubscriber({ email, firstname, lastname });
-      return userToRdo(newUser);
+      return mapUserToRdo(newUser);
     }
 
     @ApiResponse({
@@ -61,7 +61,7 @@ export class AuthenticationController {
       @Req() { user }: RequestWithUser,
     ) {
       const userToken = await this.authService.createUserToken(user);
-      return loggedUserToRdo(user, userToken.accessToken);
+      return mapLoggedUserToRdo(user, userToken.accessToken);
     }   
 
     @ApiResponse({
@@ -78,7 +78,7 @@ export class AuthenticationController {
     @Get('user/:id')
     public async getUser(@Param('id', MongoIdValidationPipe) id: string): Promise<UserRdo> {
       const user = await this.authService.getUser(id);
-      return userToRdo(user);
+      return mapUserToRdo(user);
     }
 
     @HttpCode(HttpStatus.OK)
@@ -119,6 +119,6 @@ export class AuthenticationController {
         dto.currentPassword,
         dto.newPassword,
       );
-      return userToRdo(updatedUser);
+      return mapUserToRdo(updatedUser);
     }
   }

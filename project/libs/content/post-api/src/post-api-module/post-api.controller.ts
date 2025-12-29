@@ -19,6 +19,7 @@ import { PostRdo } from '../rdo/post.rdo';
 import { PostWithPaginationRdo } from '../rdo/post-with-pagination.rdo';
 import { postToRdo, postsToRdo, paginationToRdo } from './post-api.mapper';
 import { PostApiResponseMessage } from './post-api.constant';
+import { UserIdQueryDto } from '@project/helpers';
 
 @ApiTags('posts')
 @Controller('posts')
@@ -34,7 +35,7 @@ export class PostApiController {
   @Post()
   public async create(
     @Body() dto: CreatePostDto,
-    @Query('userId') userId: string, // TODO: Get from JWT token
+    @Query() { userId }: UserIdQueryDto,
   ): Promise<PostRdo> {
     const post = await this.postApiService.createPost(dto, userId);
     return postToRdo(post);
@@ -123,7 +124,7 @@ export class PostApiController {
   @Post(':id/repost')
   public async repost(
     @Param('id') id: string,
-    @Query('userId') userId: string, // TODO: Get from JWT token
+    @Query() { userId }: UserIdQueryDto,
   ): Promise<PostRdo> {
     const post = await this.postApiService.createRepost(id, userId);
     return postToRdo(post);
@@ -165,7 +166,7 @@ export class PostApiController {
   public async update(
     @Param('id') id: string,
     @Body() dto: UpdatePostDto,
-    @Query('userId') userId: string, // TODO: Get from JWT token
+    @Query() { userId }: UserIdQueryDto,
   ): Promise<PostRdo> {
     const post = await this.postApiService.updatePost(id, dto, userId);
     return postToRdo(post);
@@ -189,7 +190,7 @@ export class PostApiController {
   @HttpCode(HttpStatus.NO_CONTENT)
   public async delete(
     @Param('id') id: string,
-    @Query('userId') userId: string, // TODO: Get from JWT token
+    @Query() { userId }: UserIdQueryDto,
   ): Promise<void> {
     await this.postApiService.deletePost(id, userId);
   }
